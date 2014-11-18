@@ -1,10 +1,8 @@
-DM3 Virtual Machine 
-===
+## DM3 Virtual Machine 
 
 If you received a Virtual Machine from the Benaroya Research Institute, refer to this guide for help in setup and maintenace of the VM.  DM3 is the name of the tomcat application, we often refer to it as 'dm3'.
 
-Setup
----
+### Setup
 
 1) Environment variables are used to control the configuration of the web application (dm3). This file is located at:
 
@@ -28,8 +26,7 @@ Three features will need to be configured, the internal hostname, the full lengt
 	
 The dataSource username and password are for MySQL/MariaDB.  while the mongodb username and password are for mongo.
 
-App. Maintenance
----
+### App. Maintenance
 
 If you recieve a new dm3.war file, we recommend installing it by the following:
 
