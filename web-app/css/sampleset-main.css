@@ -1,0 +1,367 @@
+.sampleset-container {
+	margin:0 4em;
+	zoom:1;
+	color:#666;
+	min-width: 940px;
+    position:relative;}
+
+.sampleset-container:before,.sampleset-container:after{display:table;content:"";}
+.sampleset-container:after{clear:both;}
+div.sampleset-container{margin:0 4em;}
+
+/*********DESCRIPTION*******/
+.not-editable *{cursor:default;}
+
+#name h2 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width:98%;
+    white-space: nowrap;
+}
+
+#description {   width:64% !important; }
+
+#description:after {
+    content:"";
+    display: block;
+    clear: both;   }
+
+/******PROJECT STATUS BOX******/
+
+.project-status-container {  min-height:5em;  }
+.project-status {float:right;}
+.project-status fieldset {padding:5px;}
+
+/*************TABS************/
+.tab-content {   display: none;     }
+
+/****GROUPSETS and groups*****/
+
+.groups-row {
+    zoom: 1;
+    margin-bottom: 18px;
+    margin-left: -20px; }
+
+.groups-row:before, .groups-row:after {    display: table;    content: "";    }
+.groups-row:after {    clear: both; }
+
+.groups-row .group {
+  display: inline;
+  float: left;
+  margin-left: 20px;
+}
+
+.group {   width: 260px    }
+
+.group-well {
+    background-color: #FFFFFF;
+    border: 1px solid #eee;
+    border: 1px dotted rgba(0, 0, 0, 0.25);
+    margin-bottom: 20px;
+    min-height: 20px;
+    padding: 2px;
+
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+    }
+
+.handle {
+    background-color: #e6e6e6;
+    cursor: move;
+    padding-bottom: 0.5em;
+    }
+
+.handle:hover { background-color: #c8d7db; }
+
+.group-well .handle {
+    background-image:url('../images/icons/bgicon_move.png');
+    background-repeat: no-repeat;
+    background-position: 7px 6px;
+}
+
+.farbtastic, .farbtastic .wheel { position: relative;     /*fixes farbtastic for ie7+8*/  }
+
+
+/********* Draggable List ***********
+.sortable-list { list-style: none; margin: 0; padding: 0em; }
+
+.sortable-list li, .scrollable-list li {
+    cursor: default;
+    font-weight: normal;
+    padding: 0.3em 0.5em;
+    text-align: left;
+    }
+
+.sortable-list .ui-selecting { background: #c5ddfc; }
+.sortable-list .ui-selected { background: #c5ddfc; }
+
+.scrollable-list { list-style: none; margin: 0; padding: 0em; border: 1px solid #cccccc; z-index: 100 }
+.scrollable-list .viewport { height: 10em; overflow: hidden; position: relative; }
+.scrollable-list .droppable-hover { outline: 1px solid #cc0000 }
+.scrollable-list .overview { list-style: none; position: absolute; left: 0; top: 0; width: 100%; }
+.scrollable-list .scrollbar { 
+	float: right;
+    position: relative;
+	width: 9px; }
+	
+.scrollable-list .track {
+	background-color: #f1f1f1;
+    border: 0 !important;
+	position: relative;  
+	width: 9px;
+
+    -moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	}
+	
+.scrollable-list .thumb { 
+	background-color: #999;
+    border: 0 !important;
+	overflow: hidden; 
+	position: absolute;
+	top: 0;
+    width: 9px;
+
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;}
+	
+.scrollable-list .disable { display: none; }
+
+.highlight { outline: 1px solid #dddddd }
+
+.scrollable-container {
+  overflow: auto;
+}
+
+ol.unstyled { list-style: none; margin-left: 0; }
+/*ol.drag-list>li { font-size: 0.8em; height: 1em; padding: 0;margin: 0;}***/
+
+span.filedesc {
+  font-style: italic;
+  color: #898989;}
+
+.editable-field { padding: 5px;}
+
+/*javascript file manager*/
+/* Layout helpers
+----------------------------------*/
+.ui-helper-hidden { display: none; }
+.ui-helper-hidden-accessible { position: absolute !important; clip: rect(1px 1px 1px 1px); clip: rect(1px,1px,1px,1px); }
+.ui-helper-reset { margin: 0; padding: 0; border: 0; outline: 0; line-height: 1.3; text-decoration: none; font-size: 100%; list-style: none; }
+.ui-helper-clearfix:after { content: "."; display: block; height: 0; clear: both; visibility: hidden;  border: 0 !important; }
+.ui-helper-clearfix { display: inline-block; }
+/* required comment for clearfix to work in Opera \*/
+* html .ui-helper-clearfix { height:1%; }
+.ui-helper-clearfix { display:block; }
+/* end clearfix */
+.ui-helper-zfix { width: 100%; height: 100%; top: 0; left: 0; position: absolute; opacity: 0; filter:Alpha(Opacity=0); }
+
+
+.fileupload-buttonbar .ui-button { font-weight: normal !important;}
+
+*+html button.ui-button  { margin-right:2px; margin-left:2px;}
+
+.fileupload-buttonbar .ui-button input {/*this is the hidden input for uploading images*/
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 0;
+  border: solid transparent;
+  border-width: 0 0 100px 200px;
+  opacity: 0;
+  filter: alpha(opacity=0);
+  -o-transform: translate(250px, -50px) scale(1);
+  -moz-transform: translate(-300px, 0) scale(4);
+  direction: ltr;
+  cursor: pointer; }
+
+label.fileinput-button { width: auto !important; margin-right: 4px; }  /*overrides the bootstrap standard label size*/
+
+.fileinput-button {   overflow: hidden; position: relative;  }
+
+*+html .fileinput-button {  height: 15px;  }
+
+/*to change the file upload buttons to look like standard (bootstrap) buttons*/
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default /*from .btn and .small */ {
+
+   background-color: #0064cd;
+   background-repeat: repeat-x;
+   background-image: none;
+   background-image: -khtml-gradient(linear, left top, left bottom, from(#049cdb), to(#0064cd));
+   background-image: -moz-linear-gradient(top, #049cdb, #0064cd);
+   background-image: -ms-linear-gradient(top, #049cdb, #0064cd);
+   background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #049cdb), color-stop(100%, #0064cd));
+   background-image: -webkit-linear-gradient(top, #049cdb, #0064cd);
+   background-image: -o-linear-gradient(top, #049cdb, #0064cd);
+   background-image: linear-gradient(top, #049cdb, #0064cd) !important;
+   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#049cdb', endColorstr='#0064cd', GradientType=0);
+   border: 1px solid #fff;
+   border-color: #0064cd #0064cd #003f81 #0064cd;
+   border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+   border-collapse: collapse;
+   border-width: 1px !important;
+   color: #fff;
+   font-size: 11px;
+   padding: 7px 9px;
+
+   -webkit-transition: 0.1s linear all;
+   -moz-transition: 0.1s linear all;
+   transition: 0.1s linear all;
+   -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+   -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+   -webkit-border-radius: 4px;
+   -moz-border-radius: 4px;
+   border-radius: 4px;}
+
+.ui-state-default:hover, .ui-widget-content .ui-state-default:hover, .ui-widget-header .ui-state-default:hover  {}
+
+.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active {
+    border: 1px solid #FFFFFF;
+    background-color: #0064cd;}
+
+
+/**TO FIX THE FILE UPLOADING UI*/
+
+#fileupload {padding: 0 0 0 20px;}
+
+.fileupload-content {
+  background-color: #eee !important;
+  background-image: url(../images/icons/fileui_folder.png);
+  background-position: 15px 22px;
+  background-repeat: no-repeat;
+  border-top-width: 1;
+  margin-top: 0.2em;
+  padding: 20px 0.1em 35px 50px !important;
+  width:380px;}
+
+.fileupload-content .fileupload-progressbar {  margin: 10px 0;  }
+
+.fileupload-content .ui-progressbar {  width:90% !important;   }
+
+span#spreadsheetFilename {color: #909090; font-style:italic;}
+
+/*COLUMNS IN LESS THAN 1024 SCREENS*/
+
+@media screen and (max-width: 1024px) {
+  p.filename{
+    width: 170px;
+    overflow: hidden;
+     margin-bottom:0;
+  }
+}
+
+table.files {
+  margin:  -10px 0 -25px 0;
+  border-collapse: collapse;
+  width:98%; }
+
+table.files td {
+  padding:0;
+  border: 0;}
+
+table.files img { border: none;  }
+
+table.files .progress { width: 36%;   }
+
+table.files .name {
+    font-size: 11px;
+    overflow: hidden;
+    padding: 0 6px !important;
+    width: 40%; }
+	
+table.files .name  p{ 
+    font-size: 11px;
+    height: 17px;
+    overflow: hidden;
+    padding:7px 0 0 0;
+    text-overflow: ellipsis;
+	width: 175px;
+    white-space: nowrap; }
+
+table.files .start, table.files .cancel { width:12%;}
+
+dl dd {
+    margin-bottom: 10px;
+    margin-left: 22px;}
+
+.ui-menu {
+    background-color: #ffffff;
+    display:block;
+    float: left;
+	list-style:none;
+	padding: 2px;
+	margin: 0;
+}
+
+.ui-menu .ui-menu-item {
+	clear: left;
+	float: left;
+    margin:0;
+	padding: 0;
+	zoom: 1;
+	width: 100%;
+}
+
+.ui-menu .ui-menu-item a {
+	text-decoration:none;
+	display:block;
+	padding:.2em .4em;
+	line-height:1.5;
+	zoom:1;
+}
+.ui-menu .ui-menu-item a.ui-state-hover,
+.ui-menu .ui-menu-item a.ui-state-active {
+    background-color: #cee2fc;
+    cursor: pointer;
+    font-weight: normal;
+    }
+
+span#spreadsheetFilename {color: #909090; font-style:italic;}
+
+table.annotation-table td.handle {
+    background-image:url('../images/icons/icon_move_vert.png');
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+
+table.annotation-table td.handle:hover, table.annotation-table tr.ui-sortable-helper td.handle {
+    background-color: #387099 !important; }
+
+/***ASSORTED FIXES FOR BUTTON ELEMENT IN IE7***/
+button {*border: 0 !important; *margin-right: 5px; *margin-bottom:5px; *display: inline-block; *margin-top:-5px;}
+
+button .groupset-default  {*margin-top:-3px; *margin-bottom:3px;}
+.topbar div.login-dropdown button.login-button, .fileupload-buttonbar button, button.view-analysis {*margin-top:0}
+button.view-analysis *{padding-top:6px !important; *padding-bottom:6px !important; *margin-top:3px !important;}
+
+/*end*/
+
+.modal-body fieldset, .modal-body form {/*deals with excessive spacing inside modal windows*/
+    margin-bottom:0;
+    padding-top:0;}
+
+.notlogged-replace {display: block; float: left; padding-top: 8px;}
+
+.container-fluid .tabconfig {margin-left:-20px;}
+
+div.tabconfig {padding: 15px;}
+
+div.tabconfig h5 {
+    line-height: 1em;
+    margin: 0 0 5px 0;
+}
+
+div.buttondivider {
+    display:inline-block;
+    height:20px;
+    border-left:
+    1px solid #999;
+    padding:2px 0 2px 0px;
+margin: 0 0 0 5px;}

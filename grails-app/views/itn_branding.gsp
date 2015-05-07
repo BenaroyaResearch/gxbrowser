@@ -1,0 +1,1 @@
+<a href="${createLink(uri: '/')}"><img src="${resource(dir: 'images', file: 'logo_itn.png')}" alt="Immune Tolerance Network" class="itn_logo" /></a>

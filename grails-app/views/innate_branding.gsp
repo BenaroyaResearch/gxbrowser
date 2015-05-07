@@ -1,0 +1,1 @@
+<h3 class="logo_brisquared"><a href="${createLink(uri: '/')}"><strong>HIPC</strong></a></h3>

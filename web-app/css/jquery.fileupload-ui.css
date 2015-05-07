@@ -1,0 +1,119 @@
+@charset 'UTF-8';
+/*
+ * jQuery File Upload UI Plugin CSS 5.0.6
+ * https://github.com/blueimp/jQuery-File-Upload
+ *
+ * Copyright 2010, Sebastian Tschan
+ * https://blueimp.net
+ *
+ * Licensed under the MIT license:
+ * http://creativecommons.org/licenses/MIT/
+ */
+
+.fileupload-buttonbar .ui-button input {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 0;
+  border: solid transparent;
+  border-width: 0 0 100px 200px;
+  opacity: 0;
+  filter: alpha(opacity=0);
+  -o-transform: translate(250px, -50px) scale(1);
+  -moz-transform: translate(-300px, 0) scale(4);
+  direction: ltr;
+  cursor: pointer;
+}
+
+.fileinput-button {
+  overflow: hidden;
+}
+
+/* Fix for IE 6: */
+*html .fileinput-button {
+  padding: 2px 0;
+}
+
+/* Fix for IE 7: */
+*+html .fileinput-button {
+  padding: 2px 0;
+}
+
+/*.fileupload-buttonbar {*/
+  /*padding: 0;*/
+  /*padding: 0.1em 0.2em;*/
+/*}*/
+
+.fileupload-buttonbar .ui-button {
+  /*height: 1.8em;*/
+  vertical-align: middle;
+  font: bold 11px/12px tahoma, verdana, arial, sans-serif;
+  color: white;
+}
+
+.fileupload-buttonbar {
+  border: 0;
+  background: transparent;
+}
+
+.fileupload-content {
+  /*float: left;*/
+  /*font: normal 11px/12px tahoma, verdana, arial, sans-serif;*/
+  padding: 10px 0.1em 10px 50px;
+  border-top-width: 1;
+  margin-top: 0.2em;
+    background: url(../images/icons/fileui_folder.png) 15px 14px no-repeat;
+}
+
+.fileupload-content .helptext{
+    font-size: 12px;
+    font-style: italic;
+    color: #aaa;
+    padding: 10px 0 0 0;
+}
+
+.fileupload-content .ui-progressbar {
+  /*position: absolute;*/
+  /*left: 0;*/
+  /*float: left;*/
+  width: 100px;
+  height: 16px;
+}
+
+.fileupload-content .ui-progressbar-value {
+  /*float: left;*/
+  background: url(images/pbar-ani.gif);
+}
+
+.fileupload-content .fileupload-progressbar {
+  /*width: 400px;*/
+  /*overflow: hidden;*/
+  width: 80%;
+  margin: 10px 0;
+}
+table.files td {
+  padding: 3px !important;
+  border: 0;
+  /*border-spacing: 5px;*/
+}
+
+table.files img {
+  border: none;
+}
+
+table.files .size {
+  padding: 0 10px 0 0;
+  text-align: right;
+  white-space: nowrap;
+  /*font-style: italic;*/
+  color: #666;
+}
+
+.ui-state-disabled .ui-state-disabled {
+  opacity: 1;
+  filter: alpha(opacity=100);
+}
+
+.ui-state-disabled input {
+  cursor: default;
+}

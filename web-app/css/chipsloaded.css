@@ -1,0 +1,162 @@
+h1 {padding-top:0;}
+.chipsloaded-container{
+	margin:0 4em;
+	zoom:1;
+	color:#666;
+	min-width: 940px;
+	position: relative;
+	}
+
+.chipsloaded-container:before,.chipsloaded-container:after{display:table;content:"";}
+.chipsloaded-container:after{clear:both;}
+div.chipsloaded-container{margin:0 4em;}
+
+.load_nav { margin: 0 auto 20px auto; text-align: center;}
+
+.load_nav ul { width: auto; display: inline-block; margin: 0 auto;}
+
+.load_body {
+    width:740px;
+}
+
+table.ui-datepicker-calendar td a {margin:0 !important;}
+
+form.upload_form {
+    background-color: #ebebeb;
+    padding:30px ;
+    -webkit-border-radius: 10px ;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    width: 460px;
+	margin: 30px 0 30px 0;
+}
+
+/*form.upload_form label {*/
+	/*width: 85px; */
+	/*font-weight: bold; */
+	/*text-align: left;*/
+	/*}*/
+
+form.upload_form select.chiptype {width:220px; }
+
+/*the div that goes inside a form element*/
+.centered-gray{
+   background-color: #ebebeb;
+   color: #1b1b1b;
+   line-height: 18px;
+   margin :20px 0;
+   padding:30px ;
+   width: 550px;
+   position: relative;
+   -webkit-border-radius: 10px ;
+   -moz-border-radius: 10px;
+   border-radius: 10px;
+   }
+
+/*.centered-gray p {padding: 0 0 1em 0; margin:0;}*/
+
+.centered-gray form {margin-bottom:0;}
+.centered-gray form div.section {margin-bottom:0.5em;}
+
+.centered-gray:after {clear:both;  content:""; display: block;}
+
+/*.chips-pills a{background-color:#e2eff5;}*/
+
+label.cleanlabel {float:none; clear:none; padding: 0; display:inline; margin:0; width:auto;}
+
+.load_body hr {
+	border-top: 1px solid #bdbdbd;
+	padding: 0;
+	margin: 30px 0 20px 0;
+	}
+
+.load_body h3 {
+	padding:0 0 20px 0;
+	margin: 0;
+	line-height: 18px;}
+
+input[type="file"] {
+              margin: 0px;
+			 }
+
+input.file {width:auto !important; color: #000; text-align: left !important; padding:0;}
+
+::-webkit-file-upload-button { content: "Browse"; }
+::-webkit-file-upload-text { -webkit-appearance: textfield;  }
+
+/*to change the file upload buttons to look like standard (bootstrap) buttons*/
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default /*from .btn and .small */ {
+
+   background-color: #0064cd;
+   background-repeat: repeat-x;
+   background-image: none;
+   background-image: -khtml-gradient(linear, left top, left bottom, from(#049cdb), to(#0064cd));
+   background-image: -moz-linear-gradient(top, #049cdb, #0064cd);
+   background-image: -ms-linear-gradient(top, #049cdb, #0064cd);
+   background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #049cdb), color-stop(100%, #0064cd));
+   background-image: -webkit-linear-gradient(top, #049cdb, #0064cd);
+   background-image: -o-linear-gradient(top, #049cdb, #0064cd);
+   background-image: linear-gradient(top, #049cdb, #0064cd) !important;
+   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#049cdb', endColorstr='#0064cd', GradientType=0);
+   border: 1px solid #fff;
+   border-color: #0064cd #0064cd #003f81 #0064cd;
+   border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+   border-collapse: collapse;
+   border-width: 1px !important;
+   color: #fff;
+   font-size: 11px;
+   padding: 7px 9px;
+
+   -webkit-transition: 0.1s linear all;
+   -moz-transition: 0.1s linear all;
+   transition: 0.1s linear all;
+   -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+   -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+   -webkit-border-radius: 4px;
+   -moz-border-radius: 4px;
+   border-radius: 4px;}
+
+.ui-state-default:hover, .ui-widget-content .ui-state-default:hover, .ui-widget-header .ui-state-default:hover  {}
+
+.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active {
+    border: 1px solid #FFFFFF;
+    background-color: #0064cd;}
+
+
+
+/*.HorizontalForm {*/
+	/*width: auto; */
+	/*display: inline-block; */
+	/*margin: 0 auto 20px auto;*/
+	/*text-align: left;*/
+	/*}*/
+
+/*.HorizontalForm:after, .datepicker-from:after {*/
+	/*display: block;*/
+	/*clear: both;*/
+	/*content: " ";*/
+/*}*/
+
+/*.HorizontalForm .third {width: 260px; float: left; padding-top:12px;}*/
+
+/*.HorizontalForm .third:first-child {padding:0;}*/
+
+/*.HorizontalForm label { width: 40px; text-align: left;}*/
+
+/*.HorizontalForm .datasource, .HorizontalForm .datepicker-from, .HorizontalForm .chiptype {  margin-bottom: 10px; margin-top:2px;}*/
+
+th.chipnotes, td.chipnotes {}
+
+.dialog {width: 700px;}
+.dialog table { border:1px solid #DDDDDD;  }
+
+.dialog table tr td:first-child { font-weight:bold; width:140px;}
+
+.chipsloaded-list tr td:first-child p {max-width:;}
+
+.input-append {
+    display:block;
+    overflow: auto;
+	width: 90%;
+margin-bottom:5px;}

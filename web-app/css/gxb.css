@@ -1,0 +1,994 @@
+
+.gxb-container {
+	margin:0 4em;
+	zoom:1;
+	color:#666;
+	min-width: 940px;
+	}
+
+.gxb-container:before,.gxb-container:after{display:table;content:"";}
+.gxb-container:after{clear:both;}
+div.gxb-container{margin:0 4em;}
+
+.gxb-content {
+    padding-top:10px;
+	padding-left: 270px; }
+
+.gxb-content.fullsize {padding-left:15px;}
+
+.gxb-content .loggedInArea { margin-right:0; margin-top:0px;}
+
+.gxb-content .page-header {
+    margin-bottom:5px;
+    position: relative;
+}
+
+.gxb-content .page-header h4{
+    line-height: 26px;
+    padding-top:4px;
+    max-width:80%;
+}
+
+.gxb-content .page-header .btn{
+    position:absolute;
+    bottom:4px;
+    right:0;
+    padding-top:3px;
+    padding-bottom:3px;
+}
+
+.gxb-content .page-header h4  {
+     line-height:26px;
+}
+
+.sampleSetName {
+	font-weight: bold;
+	font-size: 150%;
+	color: black;
+		}
+
+.geneBox {
+	border-bottom:  solid 1px #eeeeee;
+	border-right:  solid 1px #eeeeee;
+	margin-bottom: 2px;
+	padding: 7px;
+	background-color: #fff;
+    color: #222;
+    cursor: pointer;
+		}
+.geneBox.active {
+  background-color: #0064CD;
+  color: #fff;
+}
+
+	.geneSymbol {
+	font-weight: bold;
+	font-size: 110%;
+    display: inline-block;
+    width: 11em;
+    overflow:hidden;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+	}
+
+    .geneDetail {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	font-size: 100%;
+	}
+
+	.resultList		{
+		overflow-y: auto;
+        padding: 200px;
+		}
+
+		.geneList  {
+		/*width: 300px;*/
+		min-height: 250px;
+		/*max-height: 700px;*/
+		overflow-y: auto;
+
+		border:  none;
+        *border: 1px solid #333;
+        border: 1px solid #333\0/ !important;
+		/*border-radius: 4px;*/
+	    color: #222222;
+
+        -webkit-box-shadow: 0px 0px 5px #000;
+        -moz-box-shadow: 0px 0px 5px #000;
+        box-shadow: 0px 0px 5px #000;
+        -webkit-border-top-left-radius: 4px;
+        -webkit-border-bottom-left-radius: 4px;
+        -moz-border-radius-topleft: 4px;
+        -moz-border-radius-bottomleft: 4px;
+        border-top-left-radius: 4px;
+        border-bottom-left-radius: 4px;
+	    /*padding:  7px;*/
+	}
+
+    .rlscore {
+      float: right;
+      /*padding-right: 5px;*/
+      /*color: #333;*/
+      /*font-style: italic;*/
+    }
+	.probeLabel {
+		float: left;
+		/*white-space: nowrap;*/
+	}
+		.geneInfoPanel {
+			right: 0;
+			top: 60px;
+			width: 300px;
+			position: absolute;
+			margin-right: 10px;
+			padding: 10px;
+
+			min-height: 250px;
+			max-height: 700px;
+			overflow-y: auto;
+
+			border:  solid 1px black;
+            -moz-box-shadow: 2px 2px 2px darkgray;
+            -webkit-box-shadow: 2px 2px 2px darkgray;
+			box-shadow: 2px 2px 2px darkgray;
+			margin-top: 10px;
+			color: black;
+
+		}
+
+		.infoPanel {
+			/*width: 100%;*/
+			margin-right: 10px;
+			/*margin-bottom: 10px;*/
+			padding: 10px;
+			min-height: 110px;
+			max-height: 110px;
+            margin-top: 10px;
+			color: black;
+			/*overflow-y: auto;*/
+			position: relative;
+			bottom: 0;
+			border:  solid 1px #000;
+            -moz-box-shadow: 2px 2px 2px darkgray;
+            -webkit-box-shadow: 2px 2px 2px darkgray;
+			box-shadow: 2px 2px 2px darkgray;
+			-moz-border-radius: 4px;
+            -webkit-border-radius: 4px;
+            border-radius: 4px;
+		}
+
+	.probeLabel, .rlscore {font-size: 11px; text-transform: uppercase;}
+
+	span.geneListNav {
+		display: inline-block;
+	    width: 100%;
+	    height: 100%;
+	    margin: 0 auto;
+	}
+
+	.btn.mini {
+  		padding: 2px 3px 2px;
+  		font-size: 11px;
+	}
+
+    .well.infopanel {
+        background-color:#FDFDFD;
+        margin-bottom: 10px;
+        color: #333333;
+        padding:10px 15px 10px 15px !important;
+        height: 180px;
+        max-height: 180px;
+        overflow: visible;
+      /*border: 1px solid #eee;*/
+      /*border: 1px solid rgba(0, 0, 0, 0.40);*/
+      /*-webkit-border-radius: 4px;*/
+      /*-moz-border-radius: 4px;*/
+      /*border-radius: 4px;*/
+      /*-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);*/
+      /*-moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);*/
+      /*box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);*/
+    }
+
+.infopanel .title {
+      margin-top: -13px;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #ddd;
+      max-width: 98%;
+      -webkit-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+      -moz-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+    }
+
+.infopanel #info-samplename {
+    margin-bottom: 1px;
+    }
+
+    .info-scrollPanel {
+     /*margin-top: 25px;*/
+     /*height: 105px;*/
+     height: 180px;
+     overflow-y: auto;
+    }
+
+.info-columnPanel {
+	-moz-column-count: 2;
+    -moz-column-gap: 20px;
+	-moz-column-break-inside: avoid;
+    -webkit-column-count: 2;
+    -webkit-column-gap: 20px;
+	-webkit-column-break-inside: avoid;
+    column-count: 2;
+    column-gap: 20px;
+	column-break-inside: avoid;
+}
+
+.info-columnPanel  p {
+	display:inline-block;}
+
+    /*not currently used*/
+    .span-5-half {
+      float: left;
+      width: 280px;
+      /*margin-right: 20px;*/
+    }
+
+    .offset-5-half {
+      float: left;
+      margin-left: 20px;
+      width: 280px;
+    }
+    /* end not currently used*/
+
+ul.infoPanel-nav {
+	margin:-1px 0 0 10px;
+	position: relative;
+	}
+
+ul.infoPanel-nav li {
+	display: block;
+	float: left;
+	background-color: #fdfdfd;
+	border: 1px solid #eee;
+	border: 1px solid rgba(0, 0, 0, 0.40);
+	-webkit-border-bottom-left-radius:4px;
+	-webkit-border-bottom-right-radius: 4px;
+	-moz-border-radius-bottomleft: 4px;
+	-moz-border-radius-bottomright: 4px;
+	border-bottom-right-radius: 4px;
+	border-bottom-left-radius: 4px;
+	margin:0 0 0 15px;}
+
+ul.infoPanel-nav li  a {
+	display: block;
+	float: left;
+	padding: 3px 15px;}
+
+ul.infoPanel-nav li.active {
+	border-top:1px solid #fdfdfd;
+	}
+
+ul.infoPanel-nav li.active a {
+	color: #404040;
+	}
+
+/*.changing-data {
+    background-color: #e6eff5;
+    margin-bottom:15px;
+    border-radius: 3px;
+    height: 20px;
+    overflow: hidden;
+    padding: 3px 10px;
+	height: 17px;
+	width: 700px;}
+
+.signal {
+    font-size: 14px;
+    color: #333;
+    display:inline-block;
+    font-weight: bold;
+	min-width:150px;}
+
+ .signal h2 {
+     font-size: 14px;
+     display: inline;
+     line-height: 14px;
+    }
+
+.sampleid {display: inline-block; }
+     */
+
+#signalChart {
+    overflow-x:auto;
+    overflow-y:hidden;
+    padding-top:10px;
+    }
+
+.options-buttons {
+      text-align: right;
+      margin: 10px 10px 10px 50px;
+      height: 27px;
+
+    }
+
+.options-buttons .buttons {float: right;}
+
+.options-buttons .icon_download {
+    float: left;    }
+
+    .pullout {
+      display: none;
+      background-color: #fdfdfd;
+      position: absolute;
+      top: 0;
+      /*right: 0;*/
+      min-width: 400px;
+      /*width: 200px;*/
+      /*margin: 20px 0;*/
+      padding: 10px 20px;
+      text-align: center;
+      color: #333333;
+      z-index: 10000;
+      /*font-size: 20px;*/
+      /*border: 1px solid #eee;*/
+      border: 1px solid rgba(0, 0, 0, 0.40);
+      /*border-top: none;*/
+      /*border-radius: 4px;*/
+    }
+
+    .button-actions {
+      text-align: center;
+      padding-top: 12px;
+      border-top: 1px solid #ddd;
+      -webkit-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+      -moz-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+    }
+
+    .option-content {
+      display: none;
+    }
+
+    .option-content.active {
+      display: block;
+    }
+
+    .option-content form {
+      text-align: left;
+    }
+
+    .sidepanel {
+      position: absolute;
+      width:240px;
+      margin-top:-20px;
+     z-index:102;
+    }
+.sidepanel .genelist-hideshow {
+        position:absolute;
+        cursor: pointer;
+        width: 20px;
+        height: 60px;
+        top:200px;
+        right:-20px;
+        z-index:200;}
+
+.sidepanel.hiddenpanel {margin-left:-285px;}
+
+.sidepanel .genelist-hideshow {
+        background-image:url('../images/genelist_hide.png');}
+
+.sidepanel.hiddenpanel .genelist-hideshow {
+        background-image:url('../images/genelist_show.png');}
+
+@media screen and (max-width: 1024px) {
+        .sidepanel.hiddenpanel {
+            margin-left:-240px;
+        }
+}
+
+    .sidepanel .input label {
+     margin: 0;
+     padding: 5px;
+     clear: both;
+     min-width: 240px;
+     text-align: left;
+    }
+
+		.probeLabel
+		{
+			visibility: hidden;
+		}
+
+		.rlScoreLabel
+		{
+			visibility: hidden;
+		}
+
+		//.ui-autocomplete-loading { background: white url('../images/icons/ui-anim_basic_16x16.gif') right center no-repeat; }
+		#city { width: 25em; }
+
+		/* play with the topbar popover menu ... to be moved to common */
+		div.popover-well {
+		  min-height: 160px;
+		}
+
+		div.popover-well div.popover {
+		  display: block;
+		}
+
+		div.popover-well div.popover-wrapper {
+		  width: 50%;
+		  height: 160px;
+		  float: left;
+		  margin-left: 55px;
+		  position: relative;
+		}
+
+		div.popover-well div.popover-menu-wrapper {
+		  height: 80px;
+		}
+
+.advancedQueryControl{
+	display: block;
+	width: 210px;
+	position: relative;
+  text-align: left;
+}
+
+.advancedQueryControlDown:after {
+	content:" ";
+	display: block;
+	position:absolute;
+	width: 0px;
+	height: 0px;
+	font-size: 1px;
+	top:10px;
+	right: 15px;
+	border-color: #fff transparent;
+     border-style: solid solid none;
+    border-width: 7px 7px medium;
+}
+
+.advancedQueryControlUp:after {
+	content:" ";
+	display: block;
+	position:absolute;
+	width: 0px;
+	height: 0px;
+	font-size: 1px;
+	top:10px;
+	right: 15px;
+	border-color: #fff transparent;
+  border-width: 0 7px 7px;
+}
+
+#advancedQueryPanel {
+	margin-top: -5px;
+	margin-bottom:0;
+	width: 208px;
+	padding:  10px 15px 15px 15px;
+	-webkit-border-top-left-radius:0px;
+	-webkit-border-top-right-radius: 0px;
+	-moz-border-radius-topleft: 0px;
+	-moz-border-radius-topright: 0px;
+	border-top-right-radius: 0px;
+	border-top-left-radius: 0px;
+  text-align: center;
+	}
+
+#advancedQueryPanel label {
+	width: auto;
+	text-align: left;}
+
+#advancedQueryPanel select {
+	width: 185px;}
+
+#advancedQueryPanel form {margin: 0;}
+
+.icon_download {
+	display: block;
+	background-image:url('../images/icons/icon_download.png');
+	float: right;
+	background-repeat: no-repeat;
+	width: 28px;
+	height: 27px;
+	}
+
+.icon_download:hover {
+	background-position: 0 -27px;
+}
+
+.filterEmpty {
+	height:90%;
+	min-height: 600px;
+	background-image:url('../images/icons/loading_filter.gif');
+	background-repeat: no-repeat;
+	background-position: 320px 70px;}
+
+.filterEmpty table{display:none;}
+.filterEmpty .none-found{display:none;}
+
+.genedetails_box {
+    padding-top:5px;}
+
+.genedetails_header {font-size: 13px; font-weight: bold;}
+
+.icon_ncbi, .icon_wikipedia, .icon_wa {
+    width: 0px;
+    padding-right:68px;
+    height: 19px;
+    background-repeat: no-repeat;
+    margin:0 5px;
+    display:inline-block;
+
+    -moz-box-shadow: 0px 0px 5px #9c9c9c;
+    -webkit-box-shadow: 0px 0px 5px #9c9c9c;
+    box-shadow: 0px 0px 5px #9c9c9c;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;}
+
+.icon_ncbi:hover, .icon_wikipedia:hover, .icon_wa:hover {
+    -moz-box-shadow: 0px 0px 6px #626262;
+    -webkit-box-shadow: 0px 0px 6px #626262;
+    box-shadow: 0px 0px 6px #626262;
+}
+
+.icon_ncbi {background-image:url('../images/icons/logo_ncbi.png');}
+.icon_wikipedia {background-image:url('../images/icons/logo_wikipedia.png');}
+.icon_wa {background-image:url('../images/icons/logo_wa.png');}
+
+.fab-table {
+  margin-bottom: 0;
+}
+.tab-table th, .tab-table td {
+  padding:6px 10px;
+}
+.tab-table td p {
+  margin-bottom: 0;
+}
+.tab-table tr td:first-child, .tab-table tr td.tab-label {
+  width:150px;
+  min-width:120px;
+  text-align:right;
+  vertical-align:top;
+  font-weight:bold;
+}
+
+.tab-table tr:first-child td {
+  padding:0 10px 6px;
+}
+.tab-table tr:last-child td {
+  padding:6px 10px 0;
+  border-bottom: none;
+}
+
+.tab-table-double {}
+
+.tab-table-double tr td.tab-label {
+  min-width:240px;
+    vertical-align: middle !important;
+}
+
+.tab-table tr td.content {min-width:160px;}
+
+  @media screen and (max-width: 1024px) {
+
+
+    .tab-table-double tr td.tab-label {
+        min-width:160px;}
+
+    .tab-table tr td.content {min-width:100px;}
+
+  }
+
+
+
+
+.centered-table th, .centered-table td {
+  text-align: center;
+}
+.centered-table td {
+  color:#0069D6;
+}
+
+.group-table {
+  margin-bottom: 0;
+}
+.group-table th, .group-table td {
+  padding:4px 10px;
+}
+.group-table tr td:first-child {
+  text-align:right;
+  width: 200px;
+  font-weight: bold;
+}
+.group-table tr:first-child td {
+  padding:0px 10px 6px;
+}
+.group-table tr:last-child td {
+  padding:6px 10px 0;
+  border-bottom: none;
+}
+.group-label {
+  padding: 2px 10px;
+  margin: 2px 8px 4px 0;
+  font-size: 13px;
+  line-height: 20px;
+  float: left;
+  border-radius: 5px 5px 5px 5px;
+  border: 1px #dedede solid;
+}
+
+.group-label.active {
+  border-radius: 5px 5px 5px 5px;
+  color: #fff;
+  background-color: #0064cd;
+  /*border: none;*/
+}
+
+.plot-options-wrapper, .key-options-wrapper {
+    float: left;
+    z-index:60;
+    position: relative;
+}
+.plot-options, .key-options {
+    width: 140px;
+    text-align: left;
+    position: relative;
+    margin: 0 10px 0 0;
+    z-index:50;
+    float: left;
+}
+
+.key-options {
+    margin: 0 10px 0 0;
+    width: auto;
+    min-width: 1px;
+    width:40px;
+    display: inline-block;
+}
+
+.key-options .icon {
+     height:19px;
+    width:0px;
+    padding-left:18px;
+    display:inline-block;
+    background-image:url('../images/icons/gxb-icon-overlaykey.png');
+    margin: -1px 7px -5px -4px;
+}
+
+.chart-options, .plot-type { min-width:1px; /*sets min-width smaller for tiny buttons to override button defaults*/}
+
+
+.graph-options {
+    padding:10px 0 12px 8px !important;
+    margin:0;
+    width:155px !important;
+    height:35px;
+}
+
+.plot-options .button-arrow, .key-options .button-arrow {
+	width:0px;
+	display:block;
+	width: 17px;
+	height: 8px;
+	padding:7px 0px 6px 5px;
+	position:absolute;
+	top:2px;
+	right: 6px;
+	background-image:url('../images/icons/dropdown-arrow.png');
+	background-repeat: no-repeat;
+	background-position: 0px 2px;
+	}
+
+.key-options .button-arrow {
+    background-image:url('../images/icons/dropdown-arrow-key.png');
+}
+
+.plot-options span.icon, .chart-options span.icon
+{   height:19px;
+    width:0px;
+    padding-left:18px;
+    display:inline-block;
+    background-image:url('../images/icons/gxb-icon-overlay.png');
+    background-repeat:no-repeat;
+    margin: -1px 7px -5px -4px;}
+
+.chart-options span.icon {background-image: url('../images/icons/gxb-icon-graphkey.png');}
+
+
+.plot-type {width:40px; }
+
+.plot-type span.icon {
+    background-image:url(../images/icons/gxb-icon-graphtype.png); !important}
+
+
+ul.plot-options-options, .legend-dropdown {
+	background-color: #f3f3f3;
+    display: none;
+    cursor: default;
+    max-height: 150px;
+	*height:150px;
+    list-style-type:none;
+    margin:0;
+	overflow-x:hidden;
+	overflow-y:auto;
+    padding: 10px 0 7px 0;
+    position: absolute;
+    right: 10px;
+    width:220px;
+    top:29px;
+    text-align: left;
+    z-index:300;
+
+	-moz-border-radius: 6px;
+	-webkit-border-radius: 6px;
+	border-radius: 6px;
+	-moz-border-radius-topright: 0;
+	-webkit-border-top-right-radius:0;
+	border-top-right-radius:0;
+
+	-webkit-box-shadow: 0 2px 4px #4b6b8c;
+	-moz-box-shadow: 0 2px 4px #4b6b8c;
+	box-shadow: 0 2px 4px #4b6b8c;
+		}
+
+select.groupset-options-options {
+	background-color: #f3f3f3;
+    display: none;
+    cursor: default;
+    max-height: 150px;
+	*height:150px;
+    list-style-type:none;
+    margin:0;
+	overflow-x:hidden;
+	overflow-y:auto;
+    padding: 2px 0 1px 0;
+    position: absolute;
+    right: 10px;
+    width: 150px;
+    top:35px;
+    text-align: left;
+    z-index:300;
+
+	-moz-border-radius: 6px;
+	-webkit-border-radius: 6px;
+	border-radius: 6px;
+	-moz-border-radius-topright: 0;
+	-webkit-border-top-right-radius:0;
+	border-top-right-radius:0;
+
+	-webkit-box-shadow: 0 2px 4px #4b6b8c;
+	-moz-box-shadow: 0 2px 4px #4b6b8c;
+	box-shadow: 0 2px 4px #4b6b8c;
+}
+
+.group-legend-key {padding-bottom: 6px !important;}
+
+.legend-dropdown {
+    padding: 15px 15px 0 35px;
+    width: 270px;
+    background-color: #f3f3f3;
+    -webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+	-moz-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    border: 0;
+}
+
+.legend-dropdown div {
+    margin-bottom: 3px;
+    /*margin-left: -10px;*/
+    padding: 0;
+}
+
+.legend-dropdown div.icons {text-align: right;}
+.group-legend-key .icons {margin-bottom:-25px;}
+
+.legend-dropdown div.row {
+    padding-bottom:0px;
+}
+
+.legend-dropdown .row .span4{
+    width:200px !important; /*adjusts the span4 to fit the legend dropdown width*/
+}
+
+ul.plot-options-options li, ul.plot-options-options div {
+	color: #333;
+	display:block;
+	padding:4px 10px 3px 15px;
+	text-shadow: none;
+    width:180px;
+	 }	 
+
+ul.plot-options-options li div.button-group.result {
+    margin:0; clear: both;  height: 25px;}
+
+ul.plot-options-options li label input {vertical-align: middle; }
+ul.plot-options-options li label span {vertical-align: middle;}
+
+ul.plot-options-options label.nowidth {
+	width: auto;
+	display: block;
+	 vertical-align: middle;
+	clear: none;
+	float: none;
+	color: inherit;
+	text-align: left;
+	padding:0; }
+
+.chart-legend-key {
+    width: 230px;
+    padding-bottom:10px;
+}
+
+#categorical-overlays label.disabled {color: #7a7a7a; font-style:italic;}
+
+.well.info-header {
+    background-color: #fdfdfd;
+    padding: 6px 0 5px 25px;
+    color:#666;}
+
+
+.well.info-header .row {
+    margin-bottom:5px;
+    padding:4px 0 2px;
+    color:#666;}
+
+#currentGeneSymbol {
+    font-size:14px;
+    color:#404040;
+    font-weight:bold;
+}
+
+#currentSignal {
+    font-size:14px;
+    color:#333;
+    font-weight:bold;
+}
+
+#currentPid {
+    font-size:14px;
+    color:#404040;
+    font-weight:bold;
+}
+
+.sampleBarcode {font-weight: bold; font-size: 14px;}
+
+/**********CONTROLS THE GXB TABS********/
+
+#tab-content ul.pills {margin-bottom:0 !important;}
+
+#tab-content ul.pills li a {line-height: 26px;}
+
+ul.pills li.clinicaltabs a    {color: #467409;}
+ul.pills li.clinicaltabs a:hover {background: #568813; color: #fff;}
+ul.pills li.clinicaltabs.active a {background: #70a627; color: #fff;}
+
+
+#tg2Info  .row {margin-bottom: 4px;}
+#tg2Info .row .span2 { text-align: right;}
+
+/*#tab-subject .row, #groupInfo .row {margin-left:0;}*/
+
+span.swatch {
+    height: 12px;
+    width: 0;
+    padding-left: 12px;
+    display:inline-block;
+    float: left;
+    margin: 2px -10px 0 2px;
+}
+
+dd {
+  margin-bottom: 10px;
+  word-wrap: break-word;
+}
+
+ul.ui-autocomplete {
+    position: absolute;
+    top: 33px;
+  }
+  .tab {
+    display: none;
+  }
+  .tab.active {
+    display: block;
+  }
+  .up:after {
+    content: "";
+    position: relative;
+    top: 6px;
+    float:right;
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-bottom: 6px solid #DB2929;
+    margin-left: 5px;
+  }
+  .down:after {
+    content: "";
+    position: relative;
+    top: 6px;
+    float:right;
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right:6px solid transparent;
+    border-top: 6px solid #33A1DE;
+    margin-left: 5px;
+  }
+  .pnote {
+    margin-bottom: 10px;
+  }
+  .note-user {
+    font-style: italic;
+    color: #666;
+  }
+  .pubmed-link {
+    cursor: pointer;
+    color: #0069d6;
+    text-decoration: none;
+  }
+  .pubmed-link:hover {
+    color: #0050a3;
+    text-decoration: underline;  }
+
+.likelabel {padding-top:6px; /*imitates the height of a label without being one*/}
+
+
+   /*THIS IS A KLUDGE, FIXES SOMETHING IN BOOTSTRAP 1.2 THAT SHOULD BE IN 1.3 REMOVE THIS AFTER UPGRADING
+	    MUST BE INCLUDED AFTER BOOTSTRAP*/
+
+.tabs > li, .pills > li {
+      float: left;
+    }
+
+    .tabs > li > a, .pills > li > a {
+      display: block;
+    }
+
+    .tabs {
+      float: left;
+      width: 100%;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .tabs > li {
+      position: relative;
+      top: 1px;
+    }
+    .tabs > li > a {
+      margin-right: 2px;
+      padding: 0 15px;
+      line-height: 35px;
+      -webkit-border-radius: 4px 4px 0 0;
+      -moz-border-radius: 4px 4px 0 0;
+      border-radius: 4px 4px 0 0;
+    }
+    .tabs > li > a:hover {
+      background-color: #eee;
+      border-bottom: 1px solid #ddd;
+      text-decoration: none;
+    }
+    .tabs > li.active > a {
+      background-color: #ffffff;
+      padding: 0 14px;
+      border: 1px solid #ddd;
+      border-bottom: 0;
+      color: #808080;
+    }
+
+    body
+    {
+	    /*padding: 40px;*/
+    }
+
+    .topbar
+    {
+	    background-color: #204F5F;
+	    background-image: -moz-linear-gradient(#204F5F, #225d70);
+	    background-repeat: no-repeat;
+    }

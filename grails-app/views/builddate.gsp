@@ -1,0 +1,1 @@
+<g:meta name="app.version"/>.

@@ -1,0 +1,1 @@
+<link rel="shortcut icon" href="${resource(dir:'images/icons',file:'fav_bri2.ico')}" type="image/x-icon" />

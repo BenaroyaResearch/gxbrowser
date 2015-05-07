@@ -1,0 +1,16 @@
+.scrollable-container {
+  height: 40em;
+  overflow: auto;
+}
+
+.scrollable-container table {
+  border: 1px solid #CCCCCC;
+  border-collapse: collapse;
+}
+
+.scrollable-container td {
+  background-color: white;
+  border-collapse: collapse;
+  border-bottom: 1px solid #CCCCCC;
+  padding: 1em;
+}

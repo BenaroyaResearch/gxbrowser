@@ -1,0 +1,90 @@
+/*
+   DM.css
+   Site-specific CSS
+*/
+
+form.HorizontalForm
+{
+    margin: 1em 0;
+}
+
+form.HorizontalForm select,
+form.HorizontalForm label,
+form.HorizontalForm input[ type="submit" ]
+{
+    margin-left: 1em;
+}
+
+/* font faces */
+@font-face {
+    font-family: 'ArchitectsDaughterRegular';
+    src: url('fonts/ArchitectsDaughter-webfont.eot');
+    src: url('fonts/ArchitectsDaughter-webfont.eot?#iefix') format('embedded-opentype'),
+         url('fonts/ArchitectsDaughter-webfont.woff') format('woff'),
+         url('fonts/ArchitectsDaughter-webfont.ttf') format('truetype'),
+         url('fonts/ArchitectsDaughter-webfont.svg#ArchitectsDaughterRegular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'LuxiSansRegular';
+    src: url('fonts/luxisr-webfont.eot');
+    src: url('fonts/luxisr-webfont.eot?#iefix') format('embedded-opentype'),
+         url('fonts/luxisr-webfont.woff') format('woff'),
+         url('fonts/luxisr-webfont.ttf') format('truetype'),
+         url('fonts/luxisr-webfont.svg#LuxiSansRegular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'LuxiSansOblique';
+    src: url('fonts/luxisri-webfont.eot');
+    src: url('fonts/luxisri-webfont.eot?#iefix') format('embedded-opentype'),
+         url('fonts/luxisri-webfont.woff') format('woff'),
+         url('fonts/luxisri-webfont.ttf') format('truetype'),
+         url('fonts/luxisri-webfont.svg#LuxiSansOblique') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'LuxiSansBold';
+    src: url('fonts/luxisb-webfont.eot');
+    src: url('fonts/luxisb-webfont.eot?#iefix') format('embedded-opentype'),
+         url('fonts/luxisb-webfont.woff') format('woff'),
+         url('fonts/luxisb-webfont.ttf') format('truetype'),
+         url('fonts/luxisb-webfont.svg#LuxiSansBold') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'LuxiSansBoldOblique';
+    src: url('fonts/luxisbi-webfont.eot');
+    src: url('fonts/luxisbi-webfont.eot?#iefix') format('embedded-opentype'),
+         url('fonts/luxisbi-webfont.woff') format('woff'),
+         url('fonts/luxisbi-webfont.ttf') format('truetype'),
+         url('fonts/luxisbi-webfont.svg#LuxiSansBoldOblique') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'MolengoRegular';
+    src: url('fonts/Molengo-Regular-webfont.eot');
+    src: url('fonts/Molengo-Regular-webfont.eot?#iefix') format('embedded-opentype'),
+         url('fonts/Molengo-Regular-webfont.woff') format('woff'),
+         url('fonts/Molengo-Regular-webfont.ttf') format('truetype'),
+         url('fonts/Molengo-Regular-webfont.svg#MolengoRegular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
