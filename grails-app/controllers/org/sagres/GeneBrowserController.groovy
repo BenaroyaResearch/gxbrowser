@@ -211,6 +211,7 @@ class GeneBrowserController
 //	def sampleSetLinkComponents = [:]
     def errorMsg = null
     def defaultGroupSetID = ""
+	def limsDb = grailsApplication.config.dataSource.LIMS
 
     //    long start = System.currentTimeMillis()
     // check to see if this is a link (miniurl) being passed back in
@@ -255,19 +256,13 @@ class GeneBrowserController
     if (sampleSet)
     {
       def isTg2 = false
-      if (sampleSet)
-      {
+	  if (limsDb && limsDb != "none") {
 		  def qData = tg2QueryService.getTg2QualityData(sampleSet.id)
 		  if (qData) {
 			  isTg2 = !qData?.get(0)?.isEmpty()
 		  }
-
-        defaultGroupSetID = (params.defaultGroupSetId != null) ? params.defaultGroupSetId : sampleSet.defaultGroupSet?.id
-      }
-      else
-      {
-        errorMsg = "You must supply a sample set ID to browse"
-      }
+	  }
+      defaultGroupSetID = (params.defaultGroupSetId != null) ? params.defaultGroupSetId : sampleSet.defaultGroupSet?.id
 
 	  //@todo need to fix this to make it data driven
       def labKey = null
@@ -550,7 +545,8 @@ class GeneBrowserController
 
   //@todo need a cleaner way of handling the different datasources, but for now we just have to know what can be displayed and from where
   def getSampleDisplayInfo =
-    {
+  {
+	  def limsDb = grailsApplication.config.dataSource.LIMS
       def sampleSetId = params.long("dsid"), sampleId = params.long("sid")
       def getTg2 = params.boolean("getTg2")
 
@@ -573,7 +569,7 @@ class GeneBrowserController
               {
                 def db = v.externalDb
                 // query external db
-                if (db == "ben_tg2" && sample.externalDB == "ben_tg2")
+                if (db == limsDb && sample.externalDB == limsDb)
                 {
                   tg2KeysToTab.put(v.value, key)
                   emptyKeys.put(v.value, null)
@@ -606,7 +602,7 @@ class GeneBrowserController
                   {
                     v = String.format("%tF", v)
                   }
-                  ((Map)jsonResults.get(tab)).put("ben_tg2."+k, v)
+                  ((Map)jsonResults.get(tab)).put(limsDb + "." + k, v)
                 }
               }
             }
@@ -806,10 +802,11 @@ class GeneBrowserController
 
   def tg2SampleInfo = {
     def sampleSetId = params.long("dsid"), sampleId = params.long("sid")
+	def limsDb = grailsApplication.config.limsDb ?: "none"
     if (sampleSetId && sampleId)
     {
       ArrayData sample = ArrayData.get(sampleId)
-      if (sample && sample.externalDB == "ben_tg2")
+      if (sample && sample.externalDB == limsDb)
       {
         def result = tg2QueryService.sampleInfo(sample.externalID)
         if (result)
@@ -1085,7 +1082,7 @@ class GeneBrowserController
     def geneSymbol = params.geneSymbol
     def geneId = params.geneID
 
-	def _mysqlDb      = grailsApplication.config.dataSource.database
+	//def _mysqlDb      = grailsApplication.config.dataSource.database
 	
     if (probeId && geneSymbol && geneId)
     {
@@ -1099,12 +1096,12 @@ class GeneBrowserController
 	
 	  def sampleSetQuery
 	  
-	  def tableQuery = """SELECT COUNT(*) AS 'table' FROM information_schema.tables WHERE table_schema = '${_mysqlDb}' AND table_name = 'chip_probe_symbol'"""
-	  def rowCount = sql.rows(tableQuery.toString())
+	  //def tableQuery = """SELECT COUNT(*) AS 'table' FROM information_schema.tables WHERE table_schema = '${_mysqlDb}' AND table_name = 'chip_probe_symbol'"""
+	  //def rowCount = sql.rows(tableQuery.toString())
 	  
-	  println "table chip_probe_symbol: " + rowCount?.get(0)?.get('table').asBoolean()
+	  //println "table chip_probe_symbol: " + rowCount?.get(0)?.get('table').asBoolean()
 	  
-	  if (rowCount?.get(0)?.get('table') > 0) { // does chip_probe_symbol exist?
+	  if (grailsApplication.config.chipProbeSymbol) { // does chip_probe_symbol exist?
 	  
 		  // Get the list of chiptypes and their source fields
 		  def chips = ChipType.findAll()

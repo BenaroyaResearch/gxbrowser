@@ -892,15 +892,19 @@ class SampleSetController {
 
 		def sampleSetID = params.long('id')
 		mongoDataService.deleteSampleSet(sampleSetID)
-		refreshSampleSet(sampleSetID)
+		// TODO: test whether this commenting make a difference in resetting a SampleSet.
+		// SPresnell@benaroyaresearch.org Fri May 15 13:31:52 PDT 2015
+		//refreshSampleSet(sampleSetID)
 		
 		render(text: 'OK')
 	}
 
 	def refreshSampleSet(sampleSetID) {
+		def limsDb = grailsApplication.config.dataSource.LIMS
+
 		// get ids and sample_name to update
 		def tg2Query = """select d.id, d.barcode, e.sample_name
-				from dataset_group_set a, dataset_group b, dataset_group_detail c, array_data d, ben_tg2.sample e
+				from dataset_group_set a, dataset_group b, dataset_group_detail c, array_data d, ${limsDb}.sample e
 				where sample_set_id = ${sampleSetID}
 				and a.id = b.group_set_id
 				and b.id = c.group_id
@@ -915,9 +919,11 @@ class SampleSetController {
 		}
 
 		sampleList.each() { sample ->
+			mongoDataService.updateSampleEx(sampleSetID, sample.id, "sampleBarcode", sample.barcode)
+			// TODO: Pretty sure this doesn't do anything because sampleReg doesn't exist anymore. - in fact it should bomb out.
+			// SPresnell@benaroyaresearch.org Fri May 15 13:31:52 PDT 2015
 			def srSampleName = sample.name.getAt(0..9)
 			def srQuery = """select b.* from sampleReg.SampleTracking a, sampleReg.dna_status_results b where Sample_ID like '${srSampleName}%' and a.VMRC_RNO = b.VMRC_RNO """
-			mongoDataService.updateSampleEx(sampleSetID, sample.id, "sampleBarcode", sample.barcode)
 			sql.eachRow(srQuery.toString()) { srData ->
 				def srDataMap = srData.toRowResult()
 				srDataMap.each() {
@@ -929,6 +935,8 @@ class SampleSetController {
 		}
 	}
 
+	// TODO: Not used - remove?
+	// SPresnell@benaroyaresearch.org Fri May 15 13:31:52 PDT 2015
 	def refreshSampleRegistryData =
 	{
 		def sampleSetID = params.long('id')

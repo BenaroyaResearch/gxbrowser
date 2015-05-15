@@ -45,7 +45,6 @@ class BootStrap {
 //	  }
 	  
 //	  	servletContext.addListener(CustomTimeoutSessionListener)
-	  
 		for (sc in grailsApplication.serviceClasses) {
 			//println "Adding getGrailsApplication Method to ${sc.fullName}"
 			//sc.clazz.metaClass.getGrailsApplication = { -> grailsApplication   }
@@ -400,6 +399,26 @@ class BootStrap {
 	  	  err.printStackTrace()
 		  println "Unable to connect to Mongo - please verify Mongo is running"
 		  System.exit(1)
+	  }
+	  
+	  // check for chip_probe_symbol at startup.  This is MySQL specific.
+	  def _mysqlDb      = grailsApplication.config.dataSource.database
+	  def _limsDb		= grailsApplication.config.dataSource.LIMS
+	  def tableQuery = """SELECT COUNT(*) AS 'table' FROM information_schema.tables WHERE table_schema = '${_mysqlDb}' AND table_name = 'chip_probe_symbol'"""
+	  def rowCount = sql.rows(tableQuery.toString())
+	  
+	  if (rowCount?.get(0)?.get('table').asBoolean()) {
+		  grailsApplication.config.chipProbeSymbol = rowCount?.get(0)?.get('table').asBoolean()
+	  } 
+	  println "Table chip_probe_symbol: " + grailsApplication.config.chipProbeSymbol
+	  
+	  if (_limsDb != "none") {
+		  tableQuery = """SELECT COUNT(*) AS 'table' FROM information_schema.tables WHERE table_schema = '${_limsDb}'"""
+		  rowCount = sql.rows(tableQuery.toString())
+		  if (! rowCount?.get(0)?.get('table').asBoolean()) {
+			  println "LIMS db: override ${_limsDb} not available - now 'none'" 
+			  grailsApplication.config.dataSource.LIMS = "none" 
+		  }
 	  }
 
 		println "dm-stable branch"

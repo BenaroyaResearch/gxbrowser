@@ -14,16 +14,19 @@ dm3.envvar.dbHost    = uAppName + "HOST"
 dm3.envvar.MySQLHost = uAppName + "MYSQLHOST"
 dm3.envvar.MySQLPort = uAppName + "MYSQLPORT"
 dm3.envvar.MySQLDB   = uAppName + "MYSQLDB"
+dm3.envvar.LIMSDB    = uAppName + "LIMSDB"
 dm3.envvar.LogSQL    = uAppName + "LOGSQL"
 
 dm3.envvar.MongoHost = uAppName + "MONGOHOST"
 dm3.envvar.MongoPort = uAppName + "MONGOPORT"
 dm3.envvar.MongoDB   = uAppName + "MONGODB"
 
+
 String dbHost    = System.getenv(dm3.envvar.dbHost)    ?: "localhost";
 String mysqlHost = System.getenv(dm3.envvar.MySQLHost) ?: dbHost;
 String mysqlPort = System.getenv(dm3.envvar.MySQLPort) ?: "3306";
 String mysqlDb   = System.getenv(dm3.envvar.MySQLDB)   ?: "dm3";
+String limsDb    = System.getenv(dm3.envvar.LIMSDB)    ?: "none";
 
 String mongoHost = System.getenv(dm3.envvar.MongoHost) ?: dbHost;
 String mongoPortString = System.getenv(dm3.envvar.MongoPort);
@@ -35,6 +38,7 @@ println "CoreDB Host (${dm3.envvar.dbHost}): ${dbHost}"
 println "MySQL  Host (${dm3.envvar.MySQLHost}): ${mysqlHost}"
 println "MySQL  Port (${dm3.envvar.MySQLPort}): ${mysqlPort}"
 println "MySQL  Db   (${dm3.envvar.MySQLDB})  : ${mysqlDb}"
+println "MySQL  LIMS (${dm3.envvar.LIMSDB})   : ${limsDb}"
 println "Mongo  Host (${dm3.envvar.MongoHost}): ${mongoHost}"
 println "Mongo  Port (${dm3.envvar.MongoPort}): ${mongoPort}"
 println "Mongo  Db   (${dm3.envvar.MongoDB})  : ${mongoDb}"
@@ -51,6 +55,7 @@ dataSource {
   username = ""
   password = ""
   database = "${mysqlDb}"
+  LIMS = "${limsDb}"
 		properties {
               maxActive = 50
               maxIdle = 10
@@ -68,6 +73,8 @@ dataSource {
             }
         logSql = logMySql;
 }
+
+chipProbeSymbol = false
 
 mongodb {
   host = mongoHost

@@ -32,10 +32,8 @@ Benaroya Research Institute Gene Expression Browser (GXB) for integrating Microa
 11. Create mongo user, password and datbase for application
 12. Install MySQL (apt-get install mysql-server)
 13. Create mysql user, password, and database (recommend 'dm3') for application, grant db permissions for that user to dm3
-14. Create 'ben\_tg2' database (must be named 'ben\_tg2') for application, grant db permissions for same user to ben\_tg2
-15. Load starter databases (see http://gxb.benaroyaresearch.org/downloads/dm3_core.sql and .../ben_tg2_core.sql)
-16. Install Grails 2.1.0 (https://grails.org/download.html)
-
+14. Load starter databases (see http://gxb.benaroyaresearch.org/downloads/dm3_core.sql)
+15. Install Grails 2.1.0 (https://grails.org/download.html)
 
 
 #### Filesystem Setup
