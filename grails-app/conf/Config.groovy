@@ -170,6 +170,8 @@ println "Import E-Mail From (${dm3.envvar.importEmailFrom}) ${importer.defaultEM
 importer.defaultGenomicSource = System.getenv(dm3.envvar.defaultGenomicSource) ?: "Other"
 println "Default Genomic Source (${dm3.envvar.defaultGenomicSource}): ${importer.defaultGenomicSource}"
 
+genomicSource.tg2Datatypes = ["Benaroya", "Baylor"]
+
 // We want to control the features by Audience, do that here via the environment var <appName>_AUDIENCE
 // Valid values should be 'All', 'ITN', 'BRI', 'BIIR', 'HIPC', 'GXB', 'IFIG' but this is not enforced.
 

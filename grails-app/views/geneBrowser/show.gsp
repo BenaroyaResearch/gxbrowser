@@ -452,6 +452,8 @@
 
           <div class="row"><span class="span4 likelabel">Download Annotations for Group Set:</span> <g:select name="groupSetDownload" from="${sampleSet.groupSets}" optionKey="id" optionValue="name" onchange="downloadGroupSet(this);" noSelection="['null':'--select a group set--']"/></div>
           <div class="row"><span class="span4 likelabel">Download Annotations for Group:</span> <g:select name="groupDownload" from="${DatasetGroupSet.findById(defaultGroupSetID).groups}" optionKey="id" optionValue="name" onchange="downloadGroup(this);" noSelection="['null':'--select a group--']"/></div>
+          <div class="row"><span class="span4 likelabel">Download Ranklist:</span> <g:select name="ranklistDownload" from="${rankLists}" optionKey="id" optionValue="name" onchange="downloadRanklist(this);" noSelection="['null':'--select a ranklist--']"/></div>
+
         </div>
 
         <div class="span8">
@@ -474,6 +476,13 @@
       </div>
 
       <g:javascript>
+        var downloadSampleGroup = function() {
+          var groupSetId = currentGroupSetID;
+          if (groupSetId !== "null") {
+            location.href = getBase()+"/geneBrowser/exportSamplesheet/${sampleSet.id}?groupSetId="+currentGroupSetID+"&probeId="+currentProbeID+"&symbol="+currentGeneSymbol+"&geneId="+currentGeneID;
+          }
+        };
+      
         var downloadGroupSet = function(elt) {
           var groupSetId = $(elt).val();
           if (groupSetId !== "null") {
@@ -484,6 +493,12 @@
           var groupId = $(elt).val();
           if (groupId !== "null") {
             location.href = getBase()+"/sampleSet/exportSpreadsheet/${sampleSet.id}?groupId="+groupId;
+          }
+        };
+        var downloadRanklist = function(elt) {
+          var fileIdent = $(elt).val();
+          if (fileIdent !== "null") {
+            location.href = getBase()+"/sampleSet/exportRankListFile/${sampleSet.id}?fileIdent=" + fileIdent;
           }
         };
       </g:javascript>
@@ -824,8 +839,9 @@
       <div id="overlay-legend-content"></div>
     </div>
   </div>
+  <a href="#" class="icon_download_csv" id="sampleExport" title="Download Sample data as csv" onclick="downloadSampleGroup();return false;"></a>
   <a href="#" class="icon_download" id="chartExport" title="Download Chart as Image (.png)" onclick="saveChart();return false;"></a>
-        </div>
+  </div>
 </div>
 <g:javascript>
   var toggleGroupSets = function(elt) {
@@ -2827,8 +2843,14 @@
 	          	html += rl.description.substr(rl.description.indexOf(" ") + 1) + '</option>';
 	          }
           }
-        });
+         });
         $("#rankListSelect").html(html);
+         var htmlDown = '<option value=null>-select a rank list-</option>';
+          $.each(json.ranklists, function(i,rl) {
+          	htmlDown += '<option id="' + rl.id + '" value="' + rl.rlpid + ":" + rl.fileid + '">'+ rl.name +'</option>';
+         });
+        $("#ranklistDownload").html(htmlDown);
+        
       }
       showRankList();
       }

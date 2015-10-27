@@ -14,16 +14,13 @@ class DatasetGroupSetController {
 
 	static scaffold = DatasetGroupSet
 
-	private def tg2Datatypes = ["Benaroya", "Baylor"]
-
 	def sampleSetService
 	def mongoDataService
 	def tg2QueryService
 	def springSecurityService
 	def labkeyReportService
-  def chartingDataService
-
-
+	def chartingDataService
+	def grailsApplication
 
 	def index = {
 		redirect(action: "list", params: params)
@@ -132,7 +129,7 @@ class DatasetGroupSetController {
 		}
 
 		def datasetType = sampleSetService.getDatasetType(groupSet.sampleSet.id)?.name
-		if (datasetType in tg2Datatypes) {
+		if (datasetType in grailsApplication.config.genomicSource.tg2Datatypes) {
 			updateMongoDbWithTg2(["sampleSetId": groupSet.sampleSet.id])
 		}
 		def headers = mongoDataService.getSampleSetFieldKeys(groupSet.sampleSet.id, true)

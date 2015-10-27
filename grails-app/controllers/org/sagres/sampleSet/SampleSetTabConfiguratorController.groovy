@@ -5,21 +5,27 @@ import grails.converters.JSON
 class SampleSetTabConfiguratorController {
 
   private static final String TAB_COLLECTION = "sampleSetTabs"
-  private def tg2Datatypes = ["Benaroya", "Baylor"]
+
   def sampleSetService //injected
   def mongoDataService //injected
   def geneQueryService //injected
+  def grailsApplication
   def tg2QueryService //injected
 
   def create = {
     SampleSet sampleSet = SampleSet.get(params.id)
+	def limsDb = grailsApplication.config.dataSource.LIMS
 
     Map<String,String> mongoDatafields = mongoDataService.sampleSetFields(params.long("id"))
     Set<String> mongoDatafieldTypes = new HashSet<String>(mongoDatafields?.values()).unique()
 
     def externalFields = [:]
     externalFields.put("gene", geneQueryService.geneSummaryFields())
-    def isTg2 = tg2Datatypes.contains(sampleSetService.getDatasetType(sampleSet.id)?.name)
+	def datasetType = sampleSetService.getDatasetType(sampleSet.id)?.name
+    def isTg2 = false
+	if (limsDb && limsDb != "none" && datasetType in grailsApplication.config.genomicSource.tg2Datatypes) {
+		isTg2 = true
+	}
     if (isTg2) {
       externalFields.put("ben_tg2", tg2QueryService.tg2Fields())
     }

@@ -9,8 +9,11 @@ import common.chipInfo.ChipsLoaded
 import grails.converters.JSON
 import javax.sql.DataSource
 import groovy.sql.Sql
+import org.sagres.FilesLoaded
+import org.sagres.FileLoadStatus
 import org.sagres.geneList.GeneList
 import org.sagres.rankList.RankList
+import org.sagres.rankList.RankListParams
 import org.sagres.rankList.RankListType
 import org.sagres.sampleSet.DatasetGroup
 import org.sagres.sampleSet.DatasetGroupSet
@@ -34,8 +37,6 @@ import org.sagres.sampleSet.SampleSetRole
 
 class GeneBrowserController
 {
-
-  private def tg2Datatypes = ["Benaroya", "Baylor"]
 
   def grailsApplication
   def dataSource
@@ -921,8 +922,50 @@ class GeneBrowserController
       def ranklists = sampleSetService.getGroupSetRankLists(sampleSetId, groupSetId)
       if (ranklists) {
         def gsRanklists = []
-        ranklists.get(groupSetId).each { RankList rl ->
-          gsRanklists.push([id:rl.id, name:rl.name, description:rl.description, rankListType:rl.rankListType.abbrev])
+		List rankListParams = RankListParams.findAllBySampleSetIdAndSampleSetGroupSetId(sampleSetId, groupSetId)
+		ranklists.get(groupSetId).each { RankList rl ->
+			def filepath = null, fileid = null, rlpid = 0
+			if (rl?.fileLoaded?.loadStatus?.name == "complete") {
+				def filename = rl.fileLoaded.filename
+				def testpath = null
+				// This is a clear cut case - one test
+				if (filename.startsWith("ds"))
+				{
+					testpath =  grailsApplication.config.fileUpload.baseDir + "rankLists/imported/" + filename + ".csv"
+					//println "testing direct load: " + testpath
+					def testfile = new File(testpath)
+					if (testfile.exists()) {
+						filepath = testpath
+						fileid = rl.fileLoaded.id
+						rlpid = 0
+					}
+				}
+				// Unfortunately there isn't a mapping of the currently loaded rank lists to the files they came from.
+				// So we work backwards in time through the RankList run directories (based on RankListParams id), into
+				// the 'Results' area and see if there is a matching filename - if there is, we assume that it is the
+				// currently loaded rank list.
+				// (use .any, and 'return true' to break out of the loop when we find the first file that exists.)
+				// SPresnell@benaroyaresearch.org, Wed May 20 13:17:20 PDT 2015
+				else
+				{
+					// reverse sort
+					rankListParams.sort { a, b -> b.runDate <=> a.runDate }.any { rlp ->
+						//println "rlp: " + rlp.id + " for: " + filename
+						testpath = grailsApplication.config.mat.workDir + "ranklist/" + rlp.id + "/Results/imported/" + filename + ".csv"
+						//print "testing autoload: " + testpath
+						def testfile = new File(testpath)
+						if (testfile.exists()) {
+							filepath = testpath
+							fileid = rl.fileLoaded.id
+							rlpid = rlp.id
+							//println "rlp: " + rlp.id + " for: " + filename + " found!"
+							return true
+						}
+					}
+				}
+				//println rl.name + " ranklist - result: " + filepath
+			}
+            gsRanklists.push([id:rl.id, name:rl.name, description:rl.description, rankListType:rl.rankListType.abbrev, fileid:fileid, rlpid:rlpid])
         }
   
 		def defaultRankListType = defaultRankList?.rankListType?.abbrev
@@ -1075,6 +1118,94 @@ class GeneBrowserController
       f.transferTo(tempVersionFile)
       return tempVersionFile
     }
+  }
+
+  def exportSamplesheet = {
+	  long id = params.long("id")
+	  Long groupSetId = params.long("groupSetId")
+	  def probeId = params.probeId
+	  def geneId = params.geneId
+	  def symbol = params.symbol
+	  
+	  if (SampleSet.exists(id)) {
+		  List samples = mongoDataService.getSamples(id)
+
+		  boolean hasGroupSetInfo = false, hasGroupInfo = false
+		  Map sampleToGroupName = [:]
+		  Map sampleToGroupId = [:]
+		  Map sampleToValue = [:]
+		  if (groupSetId && DatasetGroupSet.exists(groupSetId)) {
+			  DatasetGroupSet groupSet = DatasetGroupSet.findById(groupSetId)
+			  groupSet.groups.each { DatasetGroup grp ->
+				  grp.groupDetails.each {
+					  sampleToGroupName.put(it.sample.id, grp.name)
+				  }
+			  }
+			  hasGroupSetInfo = true
+		  }
+		  //println "probeID: " + probeId
+		  def sampleData = chartingDataService.getSampleSetData(id, groupSetId, probeId, 0, -1, false)
+		  sampleData.each { gId, Map groupData ->
+			  groupData.samples.eachWithIndex { s, i ->
+				  Double value = new Double(groupData.data.get(i))
+				  sampleToValue.put(s, value.round(2))
+				  sampleToGroupId.put(s, gId) 
+			  }
+		  }
+
+		  // Build the header
+		  StringBuilder sb = new StringBuilder()
+		  sb.append("\"Array Sample ID\"")
+		  sb.append(",\"Barcode\"")
+		  sb.append(",\"Group ID\"")
+		  if (hasGroupSetInfo) {
+			  sb.append(",\"Group Name\"")
+		  }
+		  
+		  // Other sample header information
+		  List order = []
+          List keys = mongoDataService.getSampleSetFieldKeys(id, true)
+          keys.each {
+               order.push(it.label.split("\\.")[1])
+               sb.append(",\"${it.header}\"")
+          }
+
+		  // Gene and expression information
+		  sb.append(",\"Probe ID\",\"Entrez Gene ID\",\"Gene Symbol\",\"Expression Value\"")
+		  sb.append("\r\n")
+		  
+		  // Get samples
+		  samples.sort { sampleToGroupId.get(it.id) } each { Map kv ->
+			  if (!hasGroupInfo || sampleToGroupName.containsKey(kv.id)) {
+				  sb.append("\"${kv.id}\"")
+				  sb.append(",\"${kv.sampleId}\"")
+				  sb.append(",\"${sampleToGroupId.get(kv.id) ?: ''}\"")
+				  if (hasGroupSetInfo) {
+					  sb.append(",\"${sampleToGroupName.get(kv.id) ?: ''}\"")
+				  }
+
+				  // Other sample information
+				  order.each {
+					  def v = kv[it] ?: " "
+					  sb.append(",\"${v}\"")
+				  }
+				  
+				  // ProbeId, GeneId, Symbol, Value
+				  sb.append(",\"${probeId}\"")
+				  sb.append(",\"${geneId}\"")
+				  sb.append(",\"${symbol}\"")
+				  sb.append("," + sampleToValue.get(kv.id))
+				  sb.append("\r\n")
+			  }
+		  }
+	  	  //println sb.toString()
+		  //def groupName = hasGroupInfo ? "group${groupId}_" : ""
+		  def filename = "sampleset${id}_${symbol}_sampleData.csv"
+		  def output = sb.toString().getBytes()
+		  response.setContentType("application/octet-stream")
+		  response.setHeader("Content-Disposition", "attachment; filename=${filename}")
+		  response.outputStream << output
+	  }
   }
 
   def crossProject = {

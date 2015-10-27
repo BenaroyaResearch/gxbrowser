@@ -6,6 +6,8 @@ import common.SecUser
 import common.chipInfo.RawSignalDataType
 import grails.converters.JSON
 import groovy.sql.Sql
+import org.sagres.FilesLoaded
+import org.sagres.FileLoadStatus
 import org.sagres.sampleSet.annotation.*
 import org.sagres.sampleSet.component.*
 import org.sagres.mat.Analysis
@@ -29,7 +31,6 @@ class SampleSetController {
 
 //  static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
 
-	private def tg2Datatypes = ["Benaroya", "Baylor"]
 	def mongoDataService
 	def platformService
 	def converterService
@@ -409,6 +410,8 @@ class SampleSetController {
 
 	def show = {
 		def editable = false
+		def limsDb = grailsApplication.config.dataSource.LIMS
+		
 		if (loggedIn) {
 			SecUser user = springSecurityService.currentUser
 			editable = user && user.authorities.contains(SecRole.findByAuthority(grailsApplication.config.dm3.sampleset.editrole))
@@ -426,7 +429,11 @@ class SampleSetController {
 			def tg2QualityInfo, tg2SampleInfo, tg2QualityHeaders = ["sample_id", "sample_name", "barcode"],
 			tg2SampleHeaders = ["sample_id", "sample_name", "barcode"]
 			def datasetType = sampleSetService.getDatasetType(sampleSet.id)?.name
-			def showTg2 = datasetType in tg2Datatypes
+			def showTg2 = false
+			if (limsDb && limsDb != "none" && datasetType in grailsApplication.config.genomicSource.tg2Datatypes)
+			{
+				showTg2 = true
+			}
 			def showAdmin = showTg2
 			if (showTg2) {
 				tg2QualityInfo = tg2QueryService.getTg2QualityData(sampleSet.id)
@@ -1177,6 +1184,34 @@ class SampleSetController {
             response.outputStream << output
         }
     }
+	
+	def exportRankListFile =
+	{
+		long id = params.long("id")
+		String fileIdent = params.fileIdent
+		//println "params: " + params
+		def (rlpId, fileId) = fileIdent.tokenize(':')
+		def filepath = null;
+		def fileroot = FilesLoaded.get(fileId)?.filename
+		//def fileroot = fileLoaded.filename
+		if (fileroot.startsWith("ds"))
+		{
+			filepath =  grailsApplication.config.fileUpload.baseDir + "rankLists/imported/" + fileroot + ".csv"
+		}
+		else
+		{
+			filepath = grailsApplication.config.mat.workDir + "ranklist/" + rlpId + "/Results/imported/" + fileroot + ".csv"
+		}
+
+		def file = new File(filepath)
+		String filename = file.getName()
+		String content = file.text 
+		def output = content.getBytes()
+		
+		response.setContentType("application/octet-stream")
+		response.setHeader("Content-Disposition", "attachment; filename=${filename}")
+		response.outputStream << output
+	}
 
 	def markForDeletion = {
 		long id = params.long("id")
@@ -1302,17 +1337,16 @@ class SampleSetController {
   }
 
 	def archiveAndDelete = {
-		def sampleSet = SampleSet.get(params.id)
+		SampleSet sampleSet = SampleSet.get( params.long( "id" ) );
 		if ( sampleSet )
         {
-			def isParent = (SampleSet.findAllByParentSampleSet(sampleSet) != null)
+			def isParent = SampleSet.findAllByParentSampleSet(sampleSet)
 			if (! isParent) {
 				String filename = params.id + ".tgz";
 				String archiveSpec = grailsApplication.config.fileSampleSetExport.baseDir + filename;
-				println "about to archive and delete " + filename + " to " + archiveSpec
+				println "Archive and delete sampleSet " + params.id + " to " + archiveSpec
 				boolean success = sampleSetService.archiveAndDeleteSampleSet(sampleSet, archiveSpec, dataSource, matConfigService)
-				println "back from archive and delete"
-				render(success ? "OK" : "Fail")
+				render( success ? "OK" : "Fail" )
 			}
 			else
 			{
@@ -1327,12 +1361,12 @@ class SampleSetController {
 
 
 	def deleteAllData = {
-		def sampleSet = SampleSet.get(params.id)
+		SampleSet sampleSet = SampleSet.get( params.long( "id" ) );
 		if (sampleSet)
 		{
 			def isParent = SampleSet.findAllByParentSampleSet(sampleSet)
 			if (! isParent) {
-				println "about to delete " + params.id
+				println "Delete sampleSet " + params.id
 				boolean success = sampleSetService.archiveAndDeleteSampleSet(sampleSet, null, dataSource, matConfigService)
 				println "back from delete"
 				render(success ? "OK" : "Fail")
