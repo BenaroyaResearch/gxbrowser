@@ -714,63 +714,110 @@ class SampleSetFilterService {
   def List<SampleSet> applyFilterSignificantGenes(String symbol, String foldChange, Map results)
   {
 	  def probes = []
+	  def chipTypes = []
 	  def interestingSampleSets = []
 	  Sql sql = Sql.newInstance(dataSource)
-
-	  //long startTime = System.currentTimeMillis()
+	  
+	  long startTime = System.currentTimeMillis()
 	  int ccount = 0
 	  int pcount = 0
 	  
 	  // Doing the comparison in log2 space.
 	  def log2FoldChange = Math.log(foldChange.toDouble().doubleValue())/Math.log(2)
 	  
-//	  def geneQuery = """SELECT id AS Id, geneid AS geneId FROM gene_info WHERE symbol = ${symbol}"""
-//	  def geneId = sql.firstRow(geneQuery)
-	  
 	  // Get the list of chiptypes and their source fields
-	  def chips = ChipType.findAll()
-	  chips?.each {
-		def tableName    = it.probeListTable
-		def probeColumn  = it.probeListColumn 
-	  	def symbolColumn = it.symbolColumn
-
-		// Get the list of probes
-		if (tableName != null && probeColumn != null && symbolColumn != null) {
-			def symbolQuery = """SELECT ${probeColumn} AS probeColumn, ${symbolColumn} AS symbolColumn FROM ${tableName} WHERE ${symbolColumn} = '${symbol}'""".toString()
-			// println "query: " + symbolQuery
+	  //def symbolQuery = """SELECT ${probeColumn} AS probeColumn, ${symbolColumn} AS symbolColumn FROM ${tableName} WHERE ${symbolColumn} = '${symbol}'""".toString()
+	  //def symbolQuery = """SELECT ? AS probeColumn, ? AS symbolColumn FROM ? WHERE ?=?""".toString()
+	  
+	  if (grailsApplication.config.chipProbeSymbol) { // does chip_probe_symbol exist?
+			def symbolQuery = """SELECT probe_id AS probeColumn, chip_type_id AS chipType, symbol FROM chip_probe_symbol WHERE symbol = '${symbol}'""".toString()
 			sql.eachRow(symbolQuery) {
 				if(!probes.contains(it.probeColumn)) {
 					probes.push(it.probeColumn)
 					pcount++
 				}
+				if (!chipTypes.contains(it.chipType)) {
+					chipTypes.push(it.chipType)
+					ccount++
+				}
 			}
-			ccount++
-		}
 	  }
-	  //println "${pcount} probes for ${ccount} chips done @ ${System.currentTimeMillis() - startTime} ms"
-   	  //println "the probes for " + symbol + " are: " + probes
+	  else
+	  {
+	  
+	  	def chips = ChipType.findAll()
+	  	chips?.each {
+			  def tableName    = it.probeListTable
+			  def probeColumn  = it.probeListColumn 
+			  def symbolColumn = it.symbolColumn
 
+			  // Get the list of probes
+			  if (tableName != null && probeColumn != null && symbolColumn != null) {
+				  def symbolQuery = """SELECT ${probeColumn} AS probeColumn, ${symbolColumn} AS symbolColumn FROM ${tableName} WHERE ${symbolColumn} = '${symbol}'""".toString()
+				  sql.eachRow(symbolQuery) {
+					  if(!probes.contains(it.probeColumn)) {
+						  probes.push(it.probeColumn)
+						  pcount++
+					  }
+				  }
+				  ccount++
+			  }
+		  }
+	  }
+	  
+	  def probePrep = System.currentTimeMillis()
+	  try {
+		  if (session.getAttribute("logTiming")) {
+			  println "Probe list prep: " + (probePrep - startTime) + "ms for discovering " + pcount + " probes from " + ccount + " chips"
+		  }
+	  } catch (IllegalStateException ise) {
+	  }
+	  								
 	  // Get the list of samplesets based on the ranklists where 0.5 > foldChange > 2.0 (do it in log space).
 	  // def samplesQuery = """SELECT probe_id AS probeId, FORMAT(value, 2) AS value, sample_set_id as ssId, ss.name AS name, rl.description AS description from rank_list_detail as rld, rank_list as rl, sample_set as ss where rl.rank_list_type_id = 3 AND rl.id = rld.rank_list_id AND rl.sample_set_id = ss.id AND probe_id IN ('""" + probes.join("', '") + """') AND ABS(value) > 2"""
-//	  def samplesQuery = """SELECT probe_id AS probeId, FORMAT(value, 2) AS value, sample_set_id as ssId, rl.id AS rlId, REPLACE(rl.description, "PALO ", "") AS description FROM rank_list_detail as rld, rank_list as rl WHERE rl.rank_list_type_id = 3 AND rl.id = rld.rank_list_id AND probe_id IN ('""" + probes.join("', '") + """') AND ABS(LOG2(value)) > """ + log2FoldChange + " AND description LIKE 'PALO%' GROUP BY sample_set_id"
-//
-//  	  //println "query is: " + samplesQuery, 
+  	  //println "query is: " + samplesQuery,
+	   
 //	  sql.eachRow(samplesQuery) {
 //		interestingSampleSets.push(it.ssId)
 //		println "sampleSet: " + it.ssId + " probeId: " + it.probeId + " name: " + it.description
 //		results.put(it.ssId, [rlid: it.rlId, rlname: it.description, probeId: it.probeId, value: it.value]);
 //	  }
-	  probes.each {
-		  def samplesQuery = """SELECT probe_id AS probeId, FORMAT(value, 2) AS value, sample_set_id as ssId, rl.id AS rlId, REPLACE(rl.description, "PALO ", "") AS description FROM rank_list_detail as rld, rank_list as rl WHERE rl.rank_list_type_id = 3 AND rl.id = rld.rank_list_id AND probe_id = '""" + it + """' AND ABS(LOG2(value)) > """ + log2FoldChange + """ AND description LIKE 'PALO%' GROUP BY sample_set_id"""
-		  sql.eachRow(samplesQuery) {
-		  	interestingSampleSets.push(it.ssId)
-			//println "sampleSet: " + it.ssId + " probeId: " + it.probeId + " name: " + it.description
-		  	results.put(it.ssId, [rlid: it.rlId, rlname: it.description, probeId: it.probeId, value: it.value]);
+
+//	  def samplesQuery = """SELECT probe_id AS probeId, FORMAT(value, 2) AS value, sample_set_id as ssId, rl.id AS rlId, REPLACE(rl.description, "PALO ", "") AS description FROM rank_list_detail as rld, rank_list as rl WHERE rl.rank_list_type_id = 3 AND rl.id = rld.rank_list_id AND probe_id =? AND ABS(LOG2(value)) > ${log2FoldChange} AND description LIKE 'PALO%' GROUP BY sample_set_id"""
+	  def samplesQuery = """SELECT probe_id AS probeId, value AS value, sample_set_id as ssId, rl.id AS rlId, description as description FROM rank_list_detail as rld, rank_list as rl WHERE rl.rank_list_type_id = 3 AND rl.id = rld.rank_list_id AND probe_id =? AND ABS(LOG2(value)) > ${log2FoldChange} AND description LIKE 'PALO%'"""
+	  probes.each { probe ->
+		  //println "probe is: " + probe
+		  sql.eachRow(samplesQuery, [probe]) { ss ->
+			  if (!interestingSampleSets.contains(ss.ssId)) {
+				  interestingSampleSets.push(ss.ssId)
+				  def description = ss.description - 'PALO '
+				  Float value = ss.value as float
+				  //println "sampleSet: " + it.ssId + " probeId: " + it.probeId + " name: " + it.description
+				  results.put(ss.ssId, [rlid: ss.rlId, rlname: description, probeId: ss.probeId, value: value.round(2)]);
+			  }
 		  }
 	  }
-	  //println "samples done @ ${System.currentTimeMillis() - startTime} ms"
-	  def sampleSets = SampleSet.findAllByIdInList(interestingSampleSets)
+	  
+	  def probeCheck = System.currentTimeMillis()
+	  try {
+		  if (session.getAttribute("logTiming")) {
+
+			  println "Probe rank check: " + (probeCheck - probePrep) + "ms for " + pcount + " probes"
+		  }
+	  } catch (IllegalStateException ise) {
+	  }
+
+	  def sampleSets = SampleSet.findAllByIdInListAndMarkedForDeleteIsNull(interestingSampleSets)
 	  // println "these are the sets: " + sampleSets
+	  
+	  def setsFind = System.currentTimeMillis()
+	  try {
+		  if (session.getAttribute("logTiming")) {
+
+			  println "SampleSet collection: " + (setsFind - probeCheck) + "ms for " + interestingSampleSets.size() + " sample Sets"
+		  }
+	  } catch (IllegalStateException ise) {
+	  }
 
 	  sql.close()
 	  
