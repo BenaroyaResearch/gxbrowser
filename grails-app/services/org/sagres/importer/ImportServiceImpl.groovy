@@ -10,9 +10,12 @@ package org.sagres.importer;
 import groovy.util.ConfigObject;
 import grails.plugin.mail.MailService;
 import groovy.sql.Sql;
+
 import java.sql.SQLException;
+
 import org.sagres.sampleSet.SampleSetService;
 import org.sagres.sampleSet.MongoDataService;
+
 import common.chipInfo.ChipsLoaded;
 import common.chipInfo.ChipData;
 import common.chipInfo.ChipType;
@@ -20,7 +23,9 @@ import common.chipInfo.Technology;
 import common.chipInfo.GenomicDataSource;
 import common.chipInfo.FluidigmChipLoaded;
 import common.ArrayData;
+
 import org.sagres.sampleSet.SampleSet;
+import org.sagres.util.excel.ExcelBuilder;
 import org.sagres.FilesLoaded;
 import org.sagres.rankList.RankList;
 import org.sagres.rankList.RankListType;
@@ -236,7 +241,7 @@ class ImportServiceImpl
                             		[ fileSpec ], result.status, result.message,
 									emailRecipient );
 			} catch (Exception exc) {
-				println "sendEMail failed: " + exc.message()
+				println "sendEMail failed: " + exc.getMessage()
 			}
 		}
 		
@@ -394,9 +399,8 @@ class ImportServiceImpl
         }
         catch ( Throwable exc )
         {
-            println( "Import threw an exception" );
+            println "Import threw an exception: " + exc.getMessage()
             result.status = ImportStatus.ERROR;
-            println( exc.message );
             exc.printStackTrace( );
             Importer.reportErrors( [ exc.message ], logRecord,
                                    auxSpecs?.errorLogSpec, true, [ dateEnded: new Date() ] );
@@ -411,8 +415,7 @@ class ImportServiceImpl
             }
             catch ( Exception exc )
             {
-                println( "Import cleanup threw an exception" );
-                println( exc.message );
+                println "Import cleanup threw an exception: " + exc.getMessage()
                 exc.printStackTrace( );
             }
         }
@@ -423,7 +426,7 @@ class ImportServiceImpl
                             		[ fileSpec ], result.status, result.message,
 									emailRecipient );
 			} catch (Exception exc) {
-				println "sendEMail failed: " + exc.message()
+				println "sendEMail failed: " + exc.getMessage()
 			}
 		}
 
@@ -530,14 +533,14 @@ class ImportServiceImpl
 
             if ( warnings )
             {
-                println( "Import completed with warnings" );
+                println "Import completed with warnings"
                 result.status = ImportStatus.WARNING;
                 Importer.reportErrors( warnings, logRecord,
                                        auxSpecs.errorLogSpec, false, [ dateEnded: new Date() ]);
             }
             else
             {
-                println( "Import completed successfully" );
+                println "Import completed successfully"
                 result.status = ImportStatus.COMPLETE;
                 Importer.updateLogRecord( logRecord,
                                           ImportStatus.COMPLETE,
@@ -546,24 +549,23 @@ class ImportServiceImpl
         }
         catch ( ImportException exc )
         {
-            println( "Import failed" );
+            println "Import failed: " + exc.getMessage()
             result.status = ImportStatus.ERROR;
-            println( Importer.combineMessages( exc.messages, 300, 4 ) );
+//            println( Importer.combineMessages( exc.messages, 300, 4 ) );
+			// exc.printStackTrace( ); //Just for debugging
             Importer.reportErrors( exc.messages, logRecord,
                                    auxSpecs?.errorLogSpec, true, [ dateEnded: new Date() ] );
             result.message =
                     (exc.messages  ?  exc.messages[ 0 ]  :  "Import error" );
-            // exc.printStackTrace( ); //Just for debugging
         }
         catch ( Throwable exc )
         {
-            println( "Import threw an exception" );
+            println "Import threw an exception: " + exc.getMessage()
+			exc.printStackTrace( );
             result.status = ImportStatus.ERROR;
-            println( exc.message );
-            exc.printStackTrace( );
             Importer.reportErrors( [ exc.message ], logRecord,
                                    auxSpecs?.errorLogSpec, true, [ dateEnded: new Date() ] );
-            result.message = exc.message;
+            result.message = exc.message
         }
         finally
         {
@@ -575,8 +577,7 @@ class ImportServiceImpl
             }
             catch ( Exception exc )
             {
-                println( "Import cleanup threw an exception" );
-                println( exc.message );
+                println "Import cleanup threw an exception: " + exc.getMessage()
                 exc.printStackTrace( );
             }
         }
@@ -588,7 +589,7 @@ class ImportServiceImpl
 									result.status, result.message,
 									emailRecipient );
 			} catch (Exception exc) {
-				println "sendEMail failed: " + exc.message()
+				println "sendEMail failed: " + exc.getMessage()
 			}
 		}
 
@@ -692,21 +693,20 @@ class ImportServiceImpl
         }
         catch ( ImportException exc )
         {
-            println( "Import failed" );
+            println "Import failed: " + exc.getMessage()
+			// exc.printStackTrace( ); //Just for debugging
             Importer.reportErrors( exc.messages, logRecord,
                                    auxSpecs?.errorLogSpec, true,[ dateEnded: new Date() ] );
-            result.message =
-                    (exc.messages  ?  exc.messages[ 0 ]  :  "Import error" );
-            // exc.printStackTrace( ); //Just for debugging
+            //result.message = (exc.messages  ?  exc.messages[ 0 ]  :  "Import error" );
+		   result.message = exc.message
         }
         catch ( Throwable exc )
         {
-            println( "Import threw an exception" );
-            println( exc.message );
+            println "Import threw an exception: " + exc.getMessage()
             exc.printStackTrace( );
             Importer.reportErrors( [ exc.message ], logRecord,
                                    auxSpecs?.errorLogSpec, true, [ dateEnded: new Date() ] );
-            result.message = exc.message;
+		    result.message = exc.message
         }
         finally
         {
@@ -718,8 +718,7 @@ class ImportServiceImpl
             }
             catch ( Exception exc )
             {
-                println( "Import cleanup threw an exception" );
-                println( exc.message );
+                println "Import cleanup threw an exception: " + exc.getMessage()
                 exc.printStackTrace( );
             }
         }
@@ -918,8 +917,8 @@ class ImportServiceImpl
             }
             else
             {
-                println( "Import completed successfully" );
-                result.status = ImportStatus.COMPLETE;
+                println "Import completed successfully"
+                result.status = ImportStatus.COMPLETE
                 Importer.updateLogRecord( logRecord,
                                           ImportStatus.COMPLETE,
                                           [ dateEnded: new Date() ] );
@@ -927,8 +926,8 @@ class ImportServiceImpl
         }
         catch ( ImportException exc )
         {
-            println( "Import failed" );
-            result.status = ImportStatus.ERROR;
+            println "Import failed: " + exc.getMessage()
+            result.status = ImportStatus.ERROR
             Importer.reportErrors( exc.messages, logRecord,
                                    auxSpecs?.errorLogSpec, true, [ dateEnded: new Date() ] );
             result.message =
@@ -937,13 +936,12 @@ class ImportServiceImpl
         }
         catch ( Throwable exc )
         {
-            println( "Import threw an exception" );
-            result.status = ImportStatus.ERROR;
-            println( exc.message );
-            exc.printStackTrace( );
+            println "Import threw an exception: " + exc.getMessage()
+			exc.printStackTrace( )
+            result.status = ImportStatus.ERROR
             Importer.reportErrors( [ exc.message ], logRecord,
                                    auxSpecs?.errorLogSpec, true, [ dateEnded: new Date() ] );
-            result.message = exc.message;
+            result.message = exc.message
         }
         finally
         {
@@ -967,8 +965,7 @@ class ImportServiceImpl
             }
             catch ( Exception exc )
             {
-                println( "Import cleanup threw an exception" );
-                println( exc.message );
+                println "Import cleanup threw an exception: " + exc.getMessage()
                 exc.printStackTrace( );
             }
         }
@@ -979,7 +976,7 @@ class ImportServiceImpl
                             		fileSpecs, result.status, result.message,
 									emailRecipient );
 			} catch (Exception exc) {
-				println "sendEMail failed: " + exc.message()
+				println "sendEMail failed: " + exc.getMessage()
 			}
 		}
 
@@ -1030,7 +1027,7 @@ class ImportServiceImpl
             FileSpecParts specParts =
                     Importer.parseFileSpec( inFileSpec, "toBeImported" );
             ChipType chipType = getChipType();
-					  result.chipType = chipType
+			result.chipType = chipType
 
             ArrayDataTableInfo tableInfo = new ArrayDataTableInfo();
             getTableInfo( inFileSpec, tableInfo, samples );
@@ -1063,31 +1060,30 @@ class ImportServiceImpl
 
             if ( warnings )
             {
-                println( "Processing completed with warnings" );
-                result.status = ImportStatus.WARNING;
-                result.messages = warnings;
+                println "Processing completed with warnings"
+                result.status = ImportStatus.WARNING
+                result.messages = warnings
             }
             else
             {
-                println( "Processing completed successfully" );
-                result.status = ImportStatus.COMPLETE;
+                println "Processing completed successfully"
+                result.status = ImportStatus.COMPLETE
             }
         }
         catch ( ImportException exc )
         {
-            println( "Processing failed" );
-            result.status = ImportStatus.ERROR;
-            println( Importer.combineMessages( exc.messages, 300, 4 ) );
-            result.messages = exc.messages;
+            println "Processing failed: " + exc.getMessage()
+			//println( Importer.combineMessages( exc.getMessage(), 300, 4 ) );
+            result.status = ImportStatus.ERROR
+            result.messages = exc.messages
             // exc.printStackTrace( ); //Just for debugging
         }
         catch ( Throwable exc )
         {
-            println( "Processing threw an exception" );
-            result.status = ImportStatus.ERROR;
-            println( exc.message );
-            exc.printStackTrace( );
-            result.message = exc.message;
+            println "Processing threw an exception: " + exc.getMessage()
+			exc.printStackTrace( )
+            result.status = ImportStatus.ERROR
+            result.message = exc.message
         }
         return result;
     }
@@ -1150,31 +1146,30 @@ class ImportServiceImpl
 
             if ( warnings )
             {
-                println( "Processing completed with warnings" );
-                result.status = ImportStatus.WARNING;
-                result.messages = warnings;
+                println "Processing completed with warnings"
+                result.status = ImportStatus.WARNING
+                result.messages = warnings
             }
             else
             {
-                println( "Processing completed successfully" );
-                result.status = ImportStatus.COMPLETE;
+                println "Processing completed successfully"
+                result.status = ImportStatus.COMPLETE
             }
         }
         catch ( ImportException exc )
         {
-            println( "Processing failed" );
-            result.status = ImportStatus.ERROR;
-            println( Importer.combineMessages( exc.messages, 300, 4 ) );
-            result.messages = exc.messages;
+            println "Processing failed: " + exc.getMessage()
+			//println( Importer.combineMessages( exc.messages, 300, 4 ) )
+            result.status = ImportStatus.ERROR
+            result.messages = exc.messages
             // exc.printStackTrace( ); //Just for debugging
         }
         catch ( Throwable exc )
         {
-            println( "Processing threw an exception" );
-            result.status = ImportStatus.ERROR;
-            println( exc.message );
-            exc.printStackTrace( );
-            result.message = exc.message;
+            println "Processing threw an exception: " + exc.getMessage()
+            result.status = ImportStatus.ERROR
+            exc.printStackTrace( )
+            result.message = exc.message
         }
         return result;
     }

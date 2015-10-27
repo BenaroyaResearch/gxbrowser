@@ -453,7 +453,7 @@ class FocusedArraySampleSet
 		{
 			String msg = "SQL error.\n" +
 					"SQL: " + sqlStatement + "\n" +
-					"Message: " + exc.message;
+					"Message: " + exc.getMessage()
 			throw new SagresException( msg );
 		}
 		return assayTargetMap;
