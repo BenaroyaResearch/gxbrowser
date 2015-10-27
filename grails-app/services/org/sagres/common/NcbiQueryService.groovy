@@ -1,26 +1,17 @@
 package org.sagres.common
 
-import org.apache.jasper.tagplugins.jstl.core.Catch;
-
-import gov.nih.nlm.ncbi.www.soap.eutils.EFetchPubmedServiceStub
-import gov.nih.nlm.ncbi.www.soap.eutils.EFetchPubmedServiceStub.ArticleType
-import gov.nih.nlm.ncbi.www.soap.eutils.EFetchPubmedServiceStub.AuthorType
-import gov.nih.nlm.ncbi.www.soap.eutils.EFetchPubmedServiceStub.MedlineCitationType
-import gov.nih.nlm.ncbi.www.soap.eutils.EUtilsServiceStub
-import gov.nih.nlm.ncbi.www.soap.eutils.EUtilsServiceStub.LinkSetDbType
-import gov.nih.nlm.ncbi.www.soap.eutils.EUtilsServiceStub.LinkSetType
-import gov.nih.nlm.ncbi.www.soap.eutils.EUtilsServiceStub.LinkTypeE
-import gov.nih.nlm.ncbi.www.soap.eutils.EUtilsServiceStub.ItemType;
+import org.sagres.util.SagresException
 
 class NcbiQueryService {
 
-  static transactional = true
-
+  def eutilsBase = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils"
+  def geoBase = "http://www.ncbi.nlm.nih.gov/geo/query"
+  
   def queryGEO(String geoId)
   {
-    def geoxml = "http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=${geoId}&form=xml&view=quick"
-    def xml = geoxml.toURL().text
-    def fullXml = new XmlParser().parseText(xml)
+    def geoURL = geoBase + "/acc.cgi?acc=${geoId}&form=xml&view=quick"
+    def geoXML = geoURL.toURL().text
+    def fullXml = new XmlParser().parseText(geoXML)
     def sample = fullXml.Sample
     def summaryResult = [:]
     summaryResult.put("Title", sample.Title.text())
@@ -47,9 +38,9 @@ class NcbiQueryService {
 
   def queryGEOSeries(String geoId)
   {
-	def geoxml = "http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=${geoId}&form=xml&view=quick"
-	def xml = geoxml.toURL().getText()
-	def fullXml = new XmlParser().parseText(xml)
+	def geoURL = geoBase + "/acc.cgi?acc=${geoId}&form=xml&view=quick"
+	def geoXML = geoURL.toURL().getText()
+	def fullXml = new XmlParser().parseText(geoXML)
 	def series = fullXml.Series
 	def seriesResult = [:]
 	seriesResult.put("title", series.Title.text())
@@ -61,189 +52,96 @@ class NcbiQueryService {
   Map queryGene(String geneId)
   {
     Map geneInfo = [:]
-	try {
-		EUtilsServiceStub service = new EUtilsServiceStub()
-		EUtilsServiceStub.ESummaryRequest sumReq = new EUtilsServiceStub.ESummaryRequest()
-		sumReq.setDb("gene")
-		sumReq.setId(geneId)
-		EUtilsServiceStub.ESummaryResult sumRes = service.run_eSummary(sumReq)
-		sumRes.getDocSum()[0].getItem().each { field ->
-			if (field.itemContent) {
-				geneInfo.put(field.name, field.itemContent)
-			}
-		}
-	} catch (Exception e) {
-		println "Exception in ncbiQueryService queryGene ($geneId) - ${e.toString()}"
+	def summaryURL = eutilsBase + "/esummary.fcgi?db=gene&id=${geneId}"
+	def summaryXML = summaryURL.toURL().getText()
+	def parser = new XmlSlurper()
+	parser.setFeature("http://apache.org/xml/features/disallow-doctype-decl", false)
+	def fullXml = parser.parseText(summaryXML)
+	def dsummary = fullXml.DocumentSummarySet.DocumentSummary
+	if (dsummary) {
+		geneInfo.put("Name", dsummary.Name.text())
+		geneInfo.put("Summary", dsummary.Summary.text())
+		geneInfo.put("Description", dsummary.Description.text())
+	} else {
+		println "queryGene: no document (gene info) for ${geneId}..."
 	}
-
-// geneInfo.put("numArticles", getGeneLinks(geneId))
-
-    return geneInfo
+	
+	return geneInfo
   }
 
-  Map searchGene(String geneSymbol)
-  {
-    Map geneInfo = [:]
-    String webEnv = null, queryKey = null
-    try
-    {
-      EUtilsServiceStub service = new EUtilsServiceStub()
-      EUtilsServiceStub.ESearchRequest req = new EUtilsServiceStub.ESearchRequest()
-      req.setDb("pubmed")
-      req.setTerm(geneSymbol)
-      req.setSort("PublicationDate")
-      req.setUsehistory("u")
-
-      EUtilsServiceStub.ESearchResult res = service.run_eSearch(req)
-      geneInfo.put("numArticles", res.count)
-      webEnv = res.getWebEnv()
-      queryKey = res.getQueryKey()
-    }
-    catch (Exception e) {
-      println "Exception in ncbiQueryService searchGene::numArticles ($geneSymbol) - ${e.toString()}"
-    }
-
-    if (webEnv && queryKey)
-    {
-      try
-      {
-        List articles = []
-
-        EFetchPubmedServiceStub service = new EFetchPubmedServiceStub()
-        EFetchPubmedServiceStub.EFetchRequest fReq = new EFetchPubmedServiceStub.EFetchRequest()
-        fReq.setWebEnv(webEnv)
-        fReq.setQuery_key(queryKey)
-        fReq.setRetmax("25")
-
-        EFetchPubmedServiceStub.EFetchResult fRes = service.run_eFetch(fReq);
-        for (int i = 0; i < fRes.getPubmedArticleSet().getPubmedArticleSetChoice().length; i++)
-        {
-          EFetchPubmedServiceStub.PubmedArticleType art = fRes.getPubmedArticleSet().getPubmedArticleSetChoice()[i].getPubmedArticle();
-          EFetchPubmedServiceStub.PubmedBookArticleType book = fRes.getPubmedArticleSet().getPubmedArticleSetChoice()[i].getPubmedBookArticle();
-          if (art) {
-            MedlineCitationType citation = art.getMedlineCitation()
-            ArticleType article = citation.getArticle()
-            Map articleInfo = [ pmid: citation.getPMID().string, title: article.getArticleTitle().string ]
-
-            EFetchPubmedServiceStub.ArticleDateType[] date = article.getArticleDate()
-            if (date?.length > 0) {
-              EFetchPubmedServiceStub.ArticleDateType pubmedDate = date[0]
-              articleInfo.pubYear = pubmedDate.year
-            } else {
-              articleInfo.pubYear = citation.getDateRevised() ? citation.getDateRevised().year : citation.getDateCreated().year
-            }
-            articles.push(articleInfo)
-
-          } else if (book) {
-            EFetchPubmedServiceStub.BookDocumentType bk = book.getBookDocument()
-            Map bookInfo = [ pmid: bk.getPMID().string, title: bk.getArticleTitle().string, pubYear:bk.getContributionDate().year ]
-            articles.push(bookInfo)
-          }
-        }
-
-        geneInfo.articles = articles
-      }
-      catch (Exception e)
-      {
-          println "Exception in ncbiQueryService searchGene::fetchArticles ($geneSymbol) - ${e.toString()}"
-        //e.printStackTrace()
-      }
-    }
-
-    return geneInfo
-  }
 
   List getGeneLinks(String geneId)
   {
-	List<String> ids = []
-	
-    try {
-      String[] gid = new String[1]
-      gid[0] = geneId
-      EUtilsServiceStub service = new EUtilsServiceStub()
-      EUtilsServiceStub.ELinkRequest linkReq = new EUtilsServiceStub.ELinkRequest()
-      linkReq.setDbfrom("gene")
-      linkReq.setDb("pubmed")
-      linkReq.setId(gid)
-
-      EUtilsServiceStub.ELinkResult linkRes = service.run_eLink(linkReq)
-      linkRes.getLinkSet().each { LinkSetType lSet ->
-        lSet.getLinkSetDb().each { LinkSetDbType ldb ->
-          if (ldb.getLinkName() == "gene_pubmed") {
-            ldb.getLink().each { LinkTypeE link ->
-              ids.push(link.getId().getString())
-            }
-          }
-        }
-      }
-    } catch (Exception e) {
-      println "Exception in ncbiQueryService getGeneLinks ($geneId) - ${e.toString()}"
-    }
-    return ids
+	  List<String> geneLinks = []
+	  def linksURL = eutilsBase + "/elink.fcgi?dbfrom=gene&db=pubmed&id=${geneId}"
+	  def linksXML = linksURL.toURL().getText()
+	  def parser = new XmlSlurper()
+	  parser.setFeature("http://apache.org/xml/features/disallow-doctype-decl", false)
+	  def fullXml = parser.parseText(linksXML)
+	  def linkList = fullXml.LinkSet.LinkSetDb
+	  if (linkList) {
+		  geneLinks = linkList.Link.Id.findAll{ node -> node.name()}*.text()
+	  } else {
+	  	  println "getGeneLinks: no links (to pubmed) for ${geneId}..."
+	  }
+	  
+	  return geneLinks
   }
 
-  List getArticles(List<String> ids, int limit)
+  List getArticles(List<String> ids, int limit = 25) throws SagresException
   {
-    List results = []
-	Map<String, Set<String>> authors = new HashMap<String, Set<String>>();
-	
-    try
-    {
-      EUtilsServiceStub fetchService = new EUtilsServiceStub()
-      EUtilsServiceStub.ESummaryRequest req = new EUtilsServiceStub.ESummaryRequest()
-      if (limit > 0) {
-		  req.setRetmax(Integer.toString(limit))
-      }
-	  req.setDb("pubmed")
-      req.setId(ids.join(","))
-	  
-      EUtilsServiceStub.ESummaryResult res = fetchService.run_eSummary(req)
-	  
-	  for (int i = 0; i < res.getDocSum().length; i++ ) {
-		  //println "ID: " + res.getDocSum()[i].getId()
-		  Map document = [:]
-		  
-		  res.getDocSum()[i].getItem().each { field ->
-			  if (field.itemContent) {
-				  if (field.name == 'PubDate') {
-					  def (year, rest) = field.itemContent.tokenize(' ')
-					  document.put(field.name, year)
-				  } else {
-				  	document.put(field.name, field.itemContent)
+	  List<String> pids = ids
+	  List results		= []
+
+	  // This code chops it off the list of pubmed ids, before it goes to the server (for speed)
+	  // An alternative would be to ask for all ids, order by year, and then take the top 25/limits.
+	  if (ids.size() > limit) {
+		  pids = ids[0..limit-1]
+	  }
+	  def summaryURL = eutilsBase + "/esummary.fcgi?db=pubmed&id=" + pids.join(",")
+	  def summaryXML = summaryURL.toURL().getText()
+	  def parser = new XmlSlurper()
+	  parser.setFeature("http://apache.org/xml/features/disallow-doctype-decl", false)
+	  def fullXml = parser.parseText(summaryXML)
+	  def docList = fullXml
+
+	  if (docList) {
+		  def count = 0
+		  docList.'*'.each { doc ->  // breath first search into DocSum
+			  if (doc.name() == 'DocSum') {
+				  count++
+				  //println "stepping down with : '" + doc.name() + "' count: " + count
+				  def document = [:]
+				  doc.'**'.findAll { node ->  // now looking at all Ids/Items in that document
+					//println "    name: " + node.name() + ", text: " + node.text()
+					if (node.name() == "Id") {
+						document.put('pmid', node.text())
+						def id = node.text()
+						//println "pmid: " + id
+					}
+					if (node.name() == "Item") {
+						if (node['@Name'] == "PubDate") {
+							def (year, rest) = node.text().tokenize(' ')
+							document.put('PubDate', year)
+						} else if (node['@Name'] == "Title") {
+							document.put('Title', node.text())
+						}
+					}
+				  }
+				  if (document) {
+					  results.push(document)
 				  }
 			  }
 		  }
-		  document.put('pmid', res.getDocSum()[i].getId())
-		  
-//		  for (int k = 0; k < res.getDocSum()[i].getItem().length; k++) {
-//			  println "field: " + res.getDocSum()[i].getItem()[k].getName() + " value: " + res.getDocSum()[i].getItem()[k].getItemContent()
-//			  if(res.getDocSum()[i].getItem()[k].getName().equals("AuthorList")){
-//				  Set<String> auths = new HashSet<String>();
-//				  if(res.getDocSum()[i].getItem()[k]!=null){
-//					  ItemType[] items = res.getDocSum()[i].getItem()[k].getItem();
-//					  if(items!=null){
-//						  for(int a = 0; a<items.length; a++){
-//							  auths.add(items[a].getItemContent());
-//						  }
-//						  println "authors: " + auths
-//					  }
-//				  }
-//			  }
-//		  }
-		  
-		  if (document) {
-			  results.push(document)
+		  if (count == 0)
+		  {
+			  throw new SagresException('getArticles: docList does not contain any DocSum')
 		  }
+	  }	else {
+			println "getArticles: no summary for link list..."
 	  }
-    }
-    catch (Exception e)
-    {
-      // unable to retrieve info for some reason
-	  println "Exception in ncbiQueryService getArticles() - ${e.toString()}"
-    }
 
-    return results
+	  return results
   }
-
 
 }

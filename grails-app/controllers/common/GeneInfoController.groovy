@@ -37,11 +37,10 @@ class GeneInfoController
 			}
 		} catch (Exception e) {
 			//e.printStackTrace()
-			println "Exception calling ncbiQueryService (queryGene) ${e.toString()}"
+			println "Exception queryGeneInfo - queryGene ${e.getMessage()}"
 			geneInfo.put("Description", GeneInfo.findByGeneID(params.geneID)?.name ?: "--")
 		}
 		try {
-			//pubmedInfo.putAll(ncbiQueryService.searchGene(params.geneSymbol))
 			List ids = ncbiQueryService.getGeneLinks(params.geneID)
 			if (ids?.size() > 0) {
 				pubmedInfo.numArticles = ids.size()
@@ -51,31 +50,30 @@ class GeneInfoController
 				}
 			}
 		} catch (Exception e) {
-			println "Exception calling ncbiQueryService (getGeneLinks+getArticles) ${e.toString()}"
+			println "Exception queryGeneInfo - getGeneLinks/getArticles ${e.getMessage()}"
 		}
 		def jsonResults = [ "entrez" : geneInfo, geneId:params.geneID, pubmed:pubmedInfo ]
 		render jsonResults as JSON
 	}
 
 	def queryGeneLinks = {
-		int limit = params.int("limit") ?: 0
-		List ids = ncbiQueryService.getGeneLinks(params.geneID)
-		Map model = [:]
-		if (ids.size() > 0) {
-			model.numArticles = ids.size()
-			List articles = ncbiQueryService.getArticles(ids, limit)
-			if (articles) {
-				model.articles = articles
-				render model as JSON
+		int limit = params.int("limit") ?: 25
+		try {
+			List ids = ncbiQueryService.getGeneLinks(params.geneID)
+			Map model = [:]
+			if (ids.size() > 0) {
+				model.numArticles = ids.size()
+				List articles = ncbiQueryService.getArticles(ids, limit)
+				if (articles) {
+					model.articles = articles
+					render model as JSON
+				}
 			}
+		} catch (Exception e) {
+			println "Exception queryGeneLinks - getArticles ${e.getMessage()}"
 		}
 		render ""
 	}
-
-//  def searchGene = {
-//    Map results = ncbiQueryService.searchGene(params.geneSymbol)
-//    render results as JSON
-//  }
 
 	def queryGeneList =
 	{
