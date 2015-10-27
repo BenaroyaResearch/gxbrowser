@@ -7,6 +7,9 @@ import common.chipInfo.ChipsLoaded
 import groovy.sql.Sql
 import java.sql.SQLException
 import org.codehaus.groovy.grails.commons.DefaultGrailsApplication;
+import org.sagres.util.FileSys;
+import org.sagres.util.OS;
+import org.sagres.util.mongo.MongoConnector
 import org.sagres.sampleSet.SampleSetLink
 import org.sagres.sampleSet.SampleSetLinkDetail
 import org.sagres.sampleSet.annotation.SampleSetAdminInfo
@@ -16,7 +19,6 @@ import org.sagres.sampleSet.annotation.SampleSetSampleInfo
 import org.sagres.sampleSet.component.SampleSetOverviewComponent
 import org.sagres.sampleSet.component.SampleSetOverviewComponentDefault
 import org.sagres.sampleSet.component.SampleSetOverviewComponentDefaultSet
-import org.sagres.util.mongo.MongoConnector
 import org.sagres.sampleSet.annotation.SampleSetFile
 import org.sagres.sampleSet.component.FileTag
 import org.sagres.importer.ImportService;
@@ -1131,100 +1133,30 @@ class SampleSetService
 		return true;
     }
 
-//=============================================================================
-
-    boolean execSysCommand( String command,
-                            int verbosity = 1, Map results = null )
-    {
-        boolean success = false;
-        try
-        {
-            if ( verbosity > 1 )
-            {
-                println( "Executing: " + command );
-            }
-            Process process = command.execute( );
-            int returnValue = process.waitFor( );
-            success = (returnValue == 0);
-            String output = process.getText();
-            String error = process.getErr().getText();
-            if ( success )
-            {
-                if ( verbosity > 2 )
-                {
-                    println( output );
-                }
-            }
-            else
-            {
-                if ( verbosity > 0 )
-                {
-                    println( error );
-                }
-                if ( verbosity > 1 )
-                {
-                    println( output );
-                }
-            }
-            if ( results != null )
-            {
-                results.returnValue = returnValue;
-                results.output = output;
-                results.error = error;
-            }
-        }
-        catch( IOException exc )
-        {
-            success = false;
-            if ( verbosity > 0 )
-            {
-                println( "Exception: " + exc.message );
-            }
-            if ( results )
-            {
-                results.error = exc.message;
-            }
-        }
-        return success;
-    }
-
-//.............................................................................
-
-    boolean linkFile( String srcSpec, String destSpec )
-    {
-        if ( makeDirIfNeeded( destSpec ) == false )
-            return false;
-        File destFile = new File( destSpec );
-        if ( destFile.exists() )
-            destFile.delete();
-        String command = "ln -s ${srcSpec} ${destSpec}";
-        return execSysCommand( command );
-    }
-
-//-----------------------------------------------------------------------------
-
-    boolean makeDirIfNeeded( String fileSpec )
-    {
-        File parentPath = (new File( fileSpec )).getParentFile();
-        if ( parentPath.exists() )
-            return true;
-        return parentPath.mkdirs();
-    }
-
 //-----------------------------------------------------------------------------
 
     boolean generateOrLinkFile( String destSpec,
                                 String cachedSpec,
                                 Closure generateFile )
     {
+		boolean success = true
         File cachedFile = new File( cachedSpec );
         if ( cachedFile.exists() == false )
         {
-            boolean rslt = generateFile( cachedSpec );
-            if ( rslt == false )
-                return false;
+            success = generateFile( cachedSpec );
         }
-        return linkFile( cachedSpec, destSpec );
+		
+		if (success)
+		{
+			try {
+				FileSys.linkFile( cachedSpec, destSpec );
+				success = true
+			} catch (Exception exc) {
+				reportError(exc.getMessage())
+				success = false
+			}
+		}
+		return success
     }
 
 //-----------------------------------------------------------------------------
@@ -1307,12 +1239,8 @@ class SampleSetService
                 String probePrefix =
                         (manufacturer == "Illumina") ? "ILMN_" : "";
 
-                if ( makeDirIfNeeded( fileSpec ) == false )
-                {
-                    String msg = "Unable to make directory for " + fileSpec;
-                    reportError( msg );
-                    return false;
-                }
+                FileSys.makeDirIfNeeded( fileSpec )
+
                 PrintWriter tsvFile = new PrintWriter( fileSpec );
 		
                 tsvFile.print( "ProbeID" );
@@ -1390,6 +1318,11 @@ class SampleSetService
                 reportError( msg );
                 return false;
             }
+			catch (Exception exc)
+			{
+				reportError(exc.getMessage())
+				return false
+        	}
         }
 
         String baseDir =
@@ -1490,13 +1423,10 @@ class SampleSetService
 					targetAssayMap[ row.target ] = row.id;
 				}
 
-                if ( makeDirIfNeeded( fileSpec ) == false )
-                {
-                    String msg = "Unable to make directory for " + fileSpec;
-                    reportError( msg );
-                    return false;
-                }
-                PrintWriter csvFile = new PrintWriter( fileSpec );
+                FileSys.makeDirIfNeeded( fileSpec )
+
+				PrintWriter csvFile = new PrintWriter( fileSpec );
+				
 				TextTableSeparator sep = TextTableSeparator.CSV;
 
 				List< String > fields = [ "" ];
@@ -1551,6 +1481,11 @@ class SampleSetService
                 reportError( msg );
                 return false;
             }
+			catch (Exception exc)
+			{
+				reportError(exc.getMessage())
+				return false
+			}
         }
 
         String baseDir =

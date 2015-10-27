@@ -19,9 +19,10 @@ class OS
                             List arguments = [],
                             Map results = null,
                             int verbosity = 1,
-                            String workingDir = null,
-                            boolean binaryOutput = false )
+                            String workingDir = null)
     {
+		def out = new ByteArrayOutputStream()
+		def err = new ByteArrayOutputStream()
         boolean success = false;
         try
         {
@@ -36,28 +37,14 @@ class OS
             File dir = workingDir ? new File( workingDir ) : null;
             List commandList = [ "sh", "-c", command ];
             Process process = commandList.execute( null, dir );
+			process.consumeProcessOutput(out, err)
             int returnValue = process.waitFor( );
             success = (returnValue == 0);
-            def output;
-            if ( binaryOutput )
-            {
-                //This is an 8-bit/char charset
-                String txt = process.getIn().getText( "ISO-8859-1" );
-                int len = txt.size();
-                output = new byte[ len ];
-                for ( int i = 0; i < len; ++i )
-                {
-                    output[ i ] = (byte) txt[ i ];
-                }
-            }
-            else
-            {
-                output = process.getIn().getText( );
-            }
-            String error = process.getErr().getText();
+			String output = out.toString()
+			String error = err.toString()
             if ( success )
             {
-                if ( (verbosity > 2) && (binaryOutput == false) )
+                if (verbosity > 2)
                 {
                     println( output );
                 }
@@ -89,7 +76,7 @@ class OS
             success = false;
             if ( verbosity > 0 )
             {
-                println( "Exception: " + exc.message );
+                println( "IO Exception: " + exc.message );
             }
             if ( results )
             {

@@ -4,8 +4,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 	<meta name="layout" content="matmain"/>
 	<g:set var="entityName" value="${message(code: 'MATAnalysisGroupSet.label', default: 'MATAnalysisGroupSet')}" />
-		<link rel="stylesheet" href="${resource(dir: 'css', file: 'sampleset-main.css"')}"/>
-
+	<link rel="stylesheet" href="${resource(dir: 'css', file: 'sampleset-main.css"')}"/>
 	<title><g:message code="default.list.label" args="[entityName]"/></title>
 
 </head>

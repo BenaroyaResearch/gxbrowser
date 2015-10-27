@@ -215,20 +215,6 @@ class FileSys
 
 //-----------------------------------------------------------------------------
 
-    static
-    void generateOrLinkFile( String destSpec,
-                             String cachedSpec,
-                             Closure generateFile )
-    {
-        File cachedFile = new File( cachedSpec );
-        if ( cachedFile.exists() == false )
-        {
-            generateFile( cachedSpec );
-        }
-        linkFile( cachedSpec, destSpec );
-    }
-
-//-----------------------------------------------------------------------------
 }                                                                     //FileSys
 
 
